@@ -1,0 +1,54 @@
+.notFound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 150px;
+}
+
+.notFoundTitle {
+  margin-bottom: 25px;
+  animation: notFoundTitle 3s linear infinite;
+  font-size: 75px;
+  color: rgb(0, 128, 128);
+}
+
+@keyframes notFoundTitle {
+  0% {color: rgb(0, 128, 128, 1);}
+  50% {color: rgb(0, 128, 128, 0);}
+  100% {color: rgb(0, 128, 128, 1);}
+}
+
+.notFoundTitleLink {
+  outline: none;
+  text-decoration: none;
+  padding: 2px 1px 0;
+}
+
+.notFoundTitleLink:link {
+  color: #265301;
+}
+
+.notFoundTitleLink:visited {
+  color: #437A16;
+}
+
+.notFoundTitleLink:focus {
+  border-bottom: 1px solid;
+  background: #BAE498;
+}
+
+.notFoundTitleLink:hover {
+  border-bottom: 1px solid;
+  background: #CDFEAA;
+}
+
+.notFoundTitleLink:active {
+  background: #265301;
+  color: #CDFEAA;
+}
+
+.notFoundDescription {
+  font-size: 20px;
+  text-transform: uppercase;
+}
