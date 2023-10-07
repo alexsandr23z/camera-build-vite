@@ -1,16 +1,18 @@
 import React from 'react';
-import {Route, BrowserRouter, Routes} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import {HelmetProvider} from 'react-helmet-async';
 import Main from './pages/main/main';
 import { AppRoute } from './consts';
 import Product from './pages/product/product';
 import Basket from './pages/basket/basket';
 import NotFound from './pages/not-found/not-found';
+import HistoryRouter from './components/history-router/history-router';
+import browserHistory from './store/middleware/redirect';
 
 function App(): React.JSX.Element {
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <HistoryRouter history={browserHistory}>
         <Routes>
           <Route
             path={AppRoute.Main}
@@ -31,7 +33,7 @@ function App(): React.JSX.Element {
             element={<NotFound/>}
           />
         </Routes>
-      </BrowserRouter>
+      </HistoryRouter>
     </HelmetProvider>
   );
 }
