@@ -1,5 +1,6 @@
 import React from 'react';
 import { TProduct } from '../../types/product';
+import { showActiveRateng, showDisabledRateng } from '../../util/util';
 
 type TProductProps = {
   product: TProduct;
@@ -8,6 +9,9 @@ type TProductProps = {
 function ProductsCard({product}: TProductProps): React.JSX.Element {
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, rating, reviewCount, name,} = product;
+
+  const activeRatingStar = showActiveRateng(rating);
+  const disabledRatingStar = showDisabledRateng(rating);
 
   return (
     <div className="product-card">
@@ -28,21 +32,16 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
       </div>
       <div className="product-card__info">
         <div className="rate product-card__rate">
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-star" />
-          </svg>
+          { activeRatingStar.map((id) => (
+            <svg key={id} width={17} height={16} aria-hidden="true">
+              <use xlinkHref="#icon-full-star" />
+            </svg>)
+          )}
+          { disabledRatingStar.map((id) => (
+            <svg key={id} width={17} height={16} aria-hidden="true">
+              <use xlinkHref="#icon-star" />
+            </svg>)
+          )}
           <p className="visually-hidden">Рейтинг: {rating}</p>
           <p className="rate__count">
             <span className="visually-hidden">Всего оценок:</span>{reviewCount}
