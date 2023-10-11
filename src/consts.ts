@@ -1,3 +1,12 @@
+export const MIN_COUNT_PRODUCTS = 0;
+export const MAX_COUNT_PRODUCTS = 9;
+export const MAX_COUNT_STARS = 5;
+export const BANNER_SLIDE_ZERO = 0;
+export const BANNER_SLIDE_ONE = 1;
+export const BANNER_SLIDE_TWO = 2;
+export const BANNER_SLIDE_THREE = 3;
+
+
 export enum AppRoute {
   Main = '/',
   Product = '/product',
@@ -24,8 +33,7 @@ export enum ProductLevel {
 
 export enum ApiRoute {
   Products = '/cameras',
+  PromoProducts = '/promo',
 }
 
-export const MIN_COUNT_PRODUCTS = 0;
-export const MAX_COUNT_PRODUCTS = 9;
-export const MAX_COUNT_STARS = 5;
+
