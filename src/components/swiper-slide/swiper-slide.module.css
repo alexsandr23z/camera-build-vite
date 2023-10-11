@@ -1,0 +1,25 @@
+.swiperSlide {
+  position: relative;
+}
+
+.swiperWrapper {
+  position: absolute;
+  top: 260px;
+  right: 120px;
+}
+
+.bulletClass {
+  display: grid;
+  grid-template-columns: 16px 16px 16px;
+  gap: 14px;
+}
+
+.bulletClass span {
+  width: 16px;
+  height: 16px;
+  background-color: #7575E2;
+  margin-right: 14px;
+}
+
+
+
