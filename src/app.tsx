@@ -22,8 +22,11 @@ function App(): React.JSX.Element {
             path={AppRoute.Product}
             element={<Product/>}
           >
-            <Route path={`${AppRoute.Product}/:id`}/>
           </Route>
+          <Route
+            path={`${AppRoute.Product}/:id`}
+            element={<Product/>}
+          />
           <Route
             path={AppRoute.Basket}
             element={<Basket/>}

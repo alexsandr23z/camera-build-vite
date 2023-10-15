@@ -1,4 +1,3 @@
-export const MIN_COUNT_PRODUCTS = 0;
 export const MAX_COUNT_PRODUCTS = 9;
 export const MAX_COUNT_STARS = 5;
 export const BANNER_SLIDE_ZERO = 0;

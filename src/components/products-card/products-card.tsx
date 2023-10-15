@@ -1,6 +1,8 @@
 import React from 'react';
 import { TProduct } from '../../types/product';
 import { showActiveRateng, showDisabledRateng } from '../../util/util';
+import {Link} from 'react-router-dom';
+import { AppRoute } from '../../consts';
 
 type TProductProps = {
   product: TProduct;
@@ -8,7 +10,7 @@ type TProductProps = {
 
 function ProductsCard({product}: TProductProps): React.JSX.Element {
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
-    price, rating, reviewCount, name,} = product;
+    price, rating, reviewCount, name} = product;
 
   const activeRatingStar = showActiveRateng(rating);
   const disabledRatingStar = showDisabledRateng(rating);
@@ -26,7 +28,7 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
             srcSet={previewImg2x}
             width={280}
             height={240}
-            alt="Ретрокамера «Das Auge IV»"
+            alt={name}
           />
         </picture>
       </div>
@@ -61,9 +63,9 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
         >
           Купить
         </button>
-        <a className="btn btn--transparent" href="#">
+        <Link className="btn btn--transparent" to={`${AppRoute.Product}/${product.id}`}>
           Подробнее
-        </a>
+        </Link>
       </div>
     </div>
   );

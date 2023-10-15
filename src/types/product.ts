@@ -1,7 +1,7 @@
 import { ProductCategory, ProductLevel, ProductType } from '../consts';
 
 export type TProduct = {
-  id: number;
+  id: string;
   name: string;
   vendorCode: string;
   type: ProductType;
