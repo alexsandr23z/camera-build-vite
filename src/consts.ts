@@ -4,6 +4,7 @@ export const BANNER_SLIDE_ZERO = 0;
 export const BANNER_SLIDE_ONE = 1;
 export const BANNER_SLIDE_TWO = 2;
 export const BANNER_SLIDE_THREE = 3;
+export const PAGINATION_PAGES_LENGTH = 3;
 
 
 export enum AppRoute {

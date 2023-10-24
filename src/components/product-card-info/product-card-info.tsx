@@ -1,34 +1,17 @@
-import React, {useEffect} from 'react';
-import {useParams} from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../hook';
-import { fetchProduct } from '../../store/api-action/product-api';
-import { dropProduct } from '../../store/slices/product-slices';
+import React, {useState} from 'react';
 import { showActiveRateng, showDisabledRateng } from '../../util/util';
+import { TProduct } from '../../types/product';
+import ModalAddProduct from '../modal-add-product/modal-add-product';
+import ProductTabs from '../product-tabs/product-tabs';
 
-function ProductCardInfo(): React.JSX.Element {
-  const {id} = useParams();
-  const dispatch = useAppDispatch();
-  const product = useAppSelector((state) => state.product.product);
+type TProductCardInfoProps = {
+  product: TProduct;
+}
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProduct({ id }));
-    }
-
-    return () => {
-      dispatch(dropProduct());
-    };
-  }, [dispatch, id]);
-
-  if(!product || !id) {
-    return (
-      <div></div>
-    );
-  }
-
+function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
+  const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
-    price, name, vendorCode, type, category, description,
-    level, rating, reviewCount} = product;
+    price, name, rating, reviewCount} = product;
 
   const activeRatingStar = showActiveRateng(rating);
   const disabledRatingStar = showDisabledRateng(rating);
@@ -39,11 +22,11 @@ function ProductCardInfo(): React.JSX.Element {
         <picture>
           <source
             type="image/webp"
-            srcSet={previewImgWebp && previewImgWebp2x}
+            srcSet={`/${previewImgWebp && previewImgWebp2x} 2x`}
           />
           <img
-            src={previewImg}
-            srcSet={previewImg2x}
+            src={`/${previewImg}`}
+            srcSet={`/${previewImg2x} 2x`}
             width={560}
             height={480}
             alt={name}
@@ -71,51 +54,19 @@ function ProductCardInfo(): React.JSX.Element {
         <p className="product__price">
           <span className="visually-hidden">Цена:</span>{`${price}₽`}
         </p>
-        <button className="btn btn--purple" type="button">
+        <button className="btn btn--purple" type="button"
+          onClick={() => {
+            document.body.style.overflow = 'hidden';
+            setModalAddProductActive(true);
+          }}
+        >
           <svg width={24} height={16} aria-hidden="true">
             <use xlinkHref="#icon-add-basket" />
           </svg>
           Добавить в корзину
         </button>
-        <div className="tabs product__tabs">
-          <div className="tabs__controls product__tabs-controls">
-            <button className="tabs__control" type="button">
-              Характеристики
-            </button>
-            <button className="tabs__control is-active" type="button">
-              Описание
-            </button>
-          </div>
-          <div className="tabs__content">
-            <div className="tabs__element">
-              <ul className="product__tabs-list">
-                <li className="item-list">
-                  <span className="item-list__title">Артикул:</span>
-                  <p className="item-list__text"> {vendorCode}</p>
-                </li>
-                <li className="item-list">
-                  <span className="item-list__title">Категория:</span>
-                  <p className="item-list__text">{category}</p>
-                </li>
-                <li className="item-list">
-                  <span className="item-list__title">Тип камеры:</span>
-                  <p className="item-list__text">{type}</p>
-                </li>
-                <li className="item-list">
-                  <span className="item-list__title">Уровень:</span>
-                  <p className="item-list__text">{level}</p>
-                </li>
-              </ul>
-            </div>
-            <div className="tabs__element is-active">
-              <div className="product__tabs-text">
-                <p>
-                  {description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModalAddProduct product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive}/>
+        <ProductTabs product={product}/>
       </div>
     </div>
   );
