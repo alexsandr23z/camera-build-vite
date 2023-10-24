@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { TProduct } from '../../types/product';
 import { showActiveRateng, showDisabledRateng } from '../../util/util';
 import {Link} from 'react-router-dom';
 import { AppRoute } from '../../consts';
+import ModalAddProduct from '../modal-add-product/modal-add-product';
 
 type TProductProps = {
   product: TProduct;
 }
 
 function ProductsCard({product}: TProductProps): React.JSX.Element {
+  const [modalAddProductActive, setModalAddProductActive] = useState(false);
+
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, rating, reviewCount, name} = product;
 
@@ -60,9 +63,14 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
         <button
           className="btn btn--purple product-card__btn"
           type="button"
+          onClick={() => {
+            document.body.style.overflow = 'hidden';
+            setModalAddProductActive(true);
+          }}
         >
           Купить
         </button>
+        <ModalAddProduct product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive}/>
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${product.id}`}>
           Подробнее
         </Link>
