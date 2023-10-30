@@ -9,7 +9,6 @@ import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';
 import { TProduct } from '../../types/product';
 
-
 function Main(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.products.products);

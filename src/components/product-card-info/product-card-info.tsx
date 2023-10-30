@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import { showActiveRateng, showDisabledRateng } from '../../util/util';
 import { TProduct } from '../../types/product';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import ProductTabs from '../product-tabs/product-tabs';
+import Rating from '../rating/rating';
 
 type TProductCardInfoProps = {
   product: TProduct;
@@ -12,9 +12,6 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, name, rating, reviewCount} = product;
-
-  const activeRatingStar = showActiveRateng(rating);
-  const disabledRatingStar = showDisabledRateng(rating);
 
   return (
     <div className="container">
@@ -35,22 +32,7 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
       </div>
       <div className="product__content">
         <h1 className="title title--h3">{name}</h1>
-        <div className="rate product__rate">
-          { activeRatingStar.map((index) => (
-            <svg key={index} width={17} height={16} aria-hidden="true">
-              <use xlinkHref="#icon-full-star" />
-            </svg>)
-          )}
-          { disabledRatingStar.map((index) => (
-            <svg key={index} width={17} height={16} aria-hidden="true">
-              <use xlinkHref="#icon-star" />
-            </svg>)
-          )}
-          <p className="visually-hidden">Рейтинг: {rating}</p>
-          <p className="rate__count">
-            <span className="visually-hidden">Всего оценок:</span>{reviewCount}
-          </p>
-        </div>
+        <Rating rating={rating} reviewCount={reviewCount}/>
         <p className="product__price">
           <span className="visually-hidden">Цена:</span>{`${price}₽`}
         </p>

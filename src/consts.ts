@@ -1,9 +1,5 @@
 export const MAX_COUNT_PRODUCTS = 9;
 export const MAX_COUNT_STARS = 5;
-export const BANNER_SLIDE_ZERO = 0;
-export const BANNER_SLIDE_ONE = 1;
-export const BANNER_SLIDE_TWO = 2;
-export const BANNER_SLIDE_THREE = 3;
 export const PAGINATION_PAGES_LENGTH = 3;
 
 
@@ -34,6 +30,8 @@ export enum ProductLevel {
 export enum ApiRoute {
   Products = '/cameras',
   PromoProducts = '/promo',
+  Similar = '/similar',
+  Reviews = '/reviews',
 }
 
 

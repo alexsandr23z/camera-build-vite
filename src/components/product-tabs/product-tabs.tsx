@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { TProduct } from '../../types/product';
+import {useSearchParams} from 'react-router-dom';
 
 type TProductTabsProps = {
   product: TProduct;
@@ -8,14 +9,34 @@ type TProductTabsProps = {
 function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
   const [productTabsActive, setProductTabsActive] = useState(0);
   const {vendorCode, type, category, description, level} = product;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const specifications: string | null = searchParams.get('specifications');
+  const descriptions: string | null = searchParams.get('descriptions');
+
+  useEffect(() => {
+    if(productTabsActive === 0) {
+      setSearchParams({specifications: 'Характеристики'});
+    } else if(productTabsActive === 1) {
+      setSearchParams({descriptions: 'Описание'});
+    }
+  }, [specifications, descriptions, setSearchParams, productTabsActive]);
+
+  const handleSpecificationsClick = () => {
+    setProductTabsActive(0);
+  };
+
+  const handleDescriptionsClick = () => {
+    setProductTabsActive(1);
+  };
 
   return (
     <div className="tabs product__tabs">
       <div className="tabs__controls product__tabs-controls">
-        <button className={`tabs__control ${productTabsActive === 0 ? 'is-active' : ''}`} type="button" onClick={() => setProductTabsActive(0)}>
+        <button className={`tabs__control ${productTabsActive === 0 ? 'is-active' : ''}`} type="button" onClick={handleSpecificationsClick}>
           Характеристики
         </button>
-        <button className={`tabs__control ${productTabsActive === 1 ? 'is-active' : ''}`} type="button" onClick={() => setProductTabsActive(1)}>
+        <button className={`tabs__control ${productTabsActive === 1 ? 'is-active' : ''}`} type="button" onClick={handleDescriptionsClick}>
           Описание
         </button>
       </div>

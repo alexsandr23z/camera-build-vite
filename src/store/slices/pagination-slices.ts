@@ -2,9 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PAGINATION_PAGES_LENGTH } from '../../consts';
 
 type TPaginationState = {
-  page: number;
   limit: number;
-  currentPage: number;
+  currentPage: number | null;
   isNewStep: boolean;
   maxProductIndex: number | null;
   minProductIndex: number | null;
@@ -12,7 +11,6 @@ type TPaginationState = {
 }
 
 const initialState: TPaginationState = {
-  page: 1,
   limit: 9,
   currentPage: 1,
   isNewStep: false,
@@ -25,9 +23,6 @@ const paginationSlices = createSlice({
   name: 'pagination',
   initialState,
   reducers: {
-    setPage(state, action: PayloadAction<number>) {
-      state.page = action.payload;
-    },
     setLimit(state, action: PayloadAction<number>) {
       state.limit = action.payload;
     },
@@ -35,6 +30,9 @@ const paginationSlices = createSlice({
       state.currentPage = action.payload;
       state.maxProductIndex = state.currentPage * state.limit;
       state.minProductIndex = state.maxProductIndex - state.limit;
+    },
+    setPaginationPages(state, action: PayloadAction<number[]>) {
+      state.paginationPages = action.payload;
     },
     setIsNewStep(state, action: PayloadAction<boolean>) {
       state.isNewStep = action.payload;
@@ -49,4 +47,4 @@ const paginationSlices = createSlice({
 });
 
 export default paginationSlices.reducer;
-export const { setPage, setLimit, setCurrentPage, setIsNewStep, incrementPagination, decrementPagination} = paginationSlices.actions;
+export const { setLimit, setCurrentPage, setIsNewStep, setPaginationPages, incrementPagination, decrementPagination} = paginationSlices.actions;

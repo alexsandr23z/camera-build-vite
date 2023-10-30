@@ -19,6 +19,10 @@ function App(): React.JSX.Element {
             element={<Main/>}
           />
           <Route
+            path={`${AppRoute.Main}/:page`}
+            element={<Main/>}
+          />
+          <Route
             path={AppRoute.Product}
             element={<Product/>}
           >
