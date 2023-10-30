@@ -1,44 +1,39 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { TProduct } from '../../types/product';
-import {Link} from 'react-router-dom';
+import Rating from '../rating/rating';
+import { Link } from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
-import Rating from '../rating/rating';
 
-type TProductProps = {
+type TProductsSimilarCardProps = {
   product: TProduct;
 }
 
-function ProductsCard({product}: TProductProps): React.JSX.Element {
+function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.Element {
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
 
-  const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
-    price, rating, reviewCount, name} = product;
-
   return (
-    <div className="product-card">
+    <div className="product-card is-active">
       <div className="product-card__img">
         <picture>
           <source
             type="image/webp"
-            srcSet={previewImgWebp && previewImgWebp2x}
+            srcSet={`/${product.previewImgWebp && product.previewImgWebp2x} 2x`}
           />
           <img
-            src={previewImg}
-            srcSet={previewImg2x}
+            src={`/${product.previewImg}`}
+            srcSet={`/${product.previewImg2x} 2x`}
             width={280}
             height={240}
-            alt={name}
+            alt={product.name}
           />
         </picture>
       </div>
       <div className="product-card__info">
-        <Rating rating={rating} reviewCount={reviewCount}/>
-        <p className="product-card__title">
-          {name}
-        </p>
+        <Rating rating={product.rating} reviewCount={product.reviewCount} />
+        <p className="product-card__title">{product.name}</p>
         <p className="product-card__price">
-          <span className="visually-hidden">Цена:</span>{`${price}₽`}
+          <span className="visually-hidden">Цена:</span>{`${product.price}₽`}
         </p>
       </div>
       <div className="product-card__buttons">
@@ -52,7 +47,7 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
         >
           Купить
         </button>
-        <ModalAddProduct product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive}/>
+        <ModalAddProduct product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} />
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${product.id}`}>
           Подробнее
         </Link>
@@ -61,4 +56,4 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
   );
 }
 
-export default ProductsCard;
+export default ProductSimilarCard;

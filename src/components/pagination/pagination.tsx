@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { MAX_COUNT_PRODUCTS } from '../../consts';
-import {Link} from 'react-router-dom';
+import {Link, useSearchParams} from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hook';
 import { decrementPagination, incrementPagination, setCurrentPage } from '../../store/slices/pagination-slices';
 
@@ -13,25 +13,42 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
   const dispatch = useAppDispatch();
   const currentPage = useAppSelector((state) => state.pagination.currentPage);
   const paginationPages = useAppSelector((state) => state.pagination.paginationPages);
-  const paginationNumbers: number[] = [];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const lastPaginationNumbers: number[] = [];
+  const remain = paginationCount % 3;
+  const start = paginationCount - remain;
+  const end = start + remain;
 
-  const lastPaginationPages = paginationPages[paginationPages.length - 1];
+  const page: string | null = searchParams.get('page');
 
-  for (let index = paginationCount; index >= paginationPages[0]; index--) {
-    paginationNumbers.push(index);
+  for (let index = end; index > start; index--) {
+    lastPaginationNumbers.push(index);
   }
+
+  useEffect(() => {
+    if(currentPage) {
+      if(paginationPages[0] >= currentPage) {
+        dispatch(setCurrentPage(paginationPages[0]));
+      } else if(paginationPages[2] <= currentPage) {
+        dispatch(setCurrentPage(paginationPages[2]));
+      }
+      setSearchParams({page: `${currentPage}`});
+    }
+  }, [currentPage, dispatch, end, page, paginationPages, setSearchParams]);
+
+  useEffect(() => {
+    if(page) {
+      dispatch(setCurrentPage(Number(page)));
+      if(Number(page) > paginationPages[2]) {
+        dispatch(incrementPagination());
+        dispatch(setCurrentPage(Number(page)));
+      }
+    }
+  }, [dispatch, page, currentPage, paginationPages, end]);
 
   const handlePaginationClick = (pageNumber: number) => {
     dispatch(setCurrentPage(pageNumber));
   };
-
-  useEffect(() => {
-    if(paginationPages[0] >= currentPage) {
-      dispatch(setCurrentPage(paginationPages[0]));
-    } else if(paginationPages[2] <= currentPage) {
-      dispatch(setCurrentPage(paginationPages[2]));
-    }
-  }, [currentPage, dispatch, paginationPages]);
 
   const handleIncrementPagination = () => {
     dispatch(incrementPagination());
@@ -47,45 +64,46 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
 
   return (
     <div className="pagination">
+      {currentPage && currentPage <= end &&
       <ul className="pagination__list">
-        { currentPage > 3 &&
+        {currentPage > 3 &&
           <li className="pagination__item" onClick={handleDecrementPagination}>
             <Link
               className="pagination__link pagination__link--text"
-              to={`/?page=${paginationPages[2]}`}
+              to={'#'}
             >
               Назад
             </Link>
           </li>}
-        {lastPaginationPages <= paginationCount ? paginationPages.map((number) => (
+        {currentPage <= start ? paginationPages.map((number) => (
           <li key={number} className="pagination__item" onClick={() => handlePaginationClick(number)}>
             <Link
               className={`${currentPage === number ? 'pagination__link pagination__link--active' : 'pagination__link'}`}
-              to={`/?page=${number}`}
+              to={'#'}
             >
               {number}
             </Link>
           </li>)
-        ) : paginationNumbers.map((number) => (
+        ) : lastPaginationNumbers.map((number) => (
           <li key={number} className="pagination__item" onClick={() => handlePaginationClick(number)}>
             <Link
               className={`${currentPage === number ? 'pagination__link pagination__link--active' : 'pagination__link'}`}
-              to={`/?page=${number}`}
+              to={'#'}
             >
               {number}
             </Link>
           </li>)
         ).reverse()}
-        { lastPaginationPages <= paginationCount &&
+        { currentPage <= start &&
           <li className="pagination__item" onClick={handleIncrementPagination}>
             <Link
               className="pagination__link pagination__link--text"
-              to={`/?page=${paginationPages[0]}`}
+              to={'#'}
             >
             Далее
             </Link>
           </li>}
-      </ul>
+      </ul>}
     </div>
   );
 }

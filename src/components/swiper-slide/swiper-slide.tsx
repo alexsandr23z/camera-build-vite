@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import { BANNER_SLIDE_ONE, BANNER_SLIDE_THREE, BANNER_SLIDE_TWO, BANNER_SLIDE_ZERO} from '../../consts';
 import { fetchPromoProducts } from '../../store/api-action/promo-products-api';
 import Banner from '../../components/banner/banner';
 import styles from './swiper-slide.module.css';
@@ -37,15 +36,11 @@ function SwiperSlides(): React.JSX.Element {
       }}
       pagination={{ el: '.swiper-pagination', type: 'bullets', clickable: true }}
     >
-      <SwiperSlide>
-        {promoProducts.slice(BANNER_SLIDE_ZERO, BANNER_SLIDE_ONE).map((promoProduct) => <Banner key={promoProduct.id} promoProduct={promoProduct} />)}
-      </SwiperSlide>
-      <SwiperSlide>
-        {promoProducts.slice(BANNER_SLIDE_ONE, BANNER_SLIDE_TWO).map((promoProduct) => <Banner key={promoProduct.id} promoProduct={promoProduct} />)}
-      </SwiperSlide>
-      <SwiperSlide>
-        {promoProducts.slice(BANNER_SLIDE_TWO, BANNER_SLIDE_THREE).map((promoProduct) => <Banner key={promoProduct.id} promoProduct={promoProduct} />)}
-      </SwiperSlide>
+      {promoProducts.map((promoProduct) => (
+        <SwiperSlide key={promoProduct.id}>
+          <Banner key={promoProduct.id} promoProduct={promoProduct} />
+        </SwiperSlide>
+      ))}
       <div className={styles.swiperWrapper}>
         <div className={`swiper-pagination ${styles.bulletClass}`}></div>
       </div>
