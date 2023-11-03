@@ -4,7 +4,6 @@ import { PAGINATION_PAGES_LENGTH } from '../../consts';
 type TPaginationState = {
   limit: number;
   currentPage: number | null;
-  isNewStep: boolean;
   maxProductIndex: number | null;
   minProductIndex: number | null;
   paginationPages: number[];
@@ -13,7 +12,6 @@ type TPaginationState = {
 const initialState: TPaginationState = {
   limit: 9,
   currentPage: 1,
-  isNewStep: false,
   maxProductIndex: null,
   minProductIndex: null,
   paginationPages: [1, 2, 3],
@@ -31,12 +29,6 @@ const paginationSlices = createSlice({
       state.maxProductIndex = state.currentPage * state.limit;
       state.minProductIndex = state.maxProductIndex - state.limit;
     },
-    setPaginationPages(state, action: PayloadAction<number[]>) {
-      state.paginationPages = action.payload;
-    },
-    setIsNewStep(state, action: PayloadAction<boolean>) {
-      state.isNewStep = action.payload;
-    },
     incrementPagination(state) {
       state.paginationPages = state.paginationPages.map((item) => item + PAGINATION_PAGES_LENGTH);
     },
@@ -47,4 +39,4 @@ const paginationSlices = createSlice({
 });
 
 export default paginationSlices.reducer;
-export const { setLimit, setCurrentPage, setIsNewStep, setPaginationPages, incrementPagination, decrementPagination} = paginationSlices.actions;
+export const { setLimit, setCurrentPage, incrementPagination, decrementPagination} = paginationSlices.actions;

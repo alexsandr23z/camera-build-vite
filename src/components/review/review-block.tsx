@@ -1,7 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useAppDispatch, useAppSelector } from '../hook';
 import { fetchReviews } from '../../store/api-action/review-api';
 import ReviewList from './review-list';
+import ReviewForm from './review-form';
+
 
 type TReviewBlockProps = {
   id: string | undefined;
@@ -11,6 +13,9 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.reviews.reviews);
   const sortReview = [...reviews].sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
+  const [modalReviewFormActive, setModalReviewFormActive] = useState(false);
+  const [showingReviews, setShowingReviews] = useState(3);
+  const reviewsLength = sortReview.length;
 
   useEffect(() => {
     if(id) {
@@ -19,24 +24,30 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
   }, [dispatch, id]);
 
   const handleReviewClick = () => {
-    console.log(sortReview);
+    setShowingReviews(showingReviews + 3);
   };
 
   return (
     <div className="container">
       <div className="page-content__headed">
         <h2 className="title title--h3">Отзывы</h2>
-        <button className="btn" type="button">
+        <button className="btn" type="button" onClick={() => {
+          document.body.style.overflow = 'hidden';
+          setModalReviewFormActive(true);
+        }}
+        >
           Оставить свой отзыв
         </button>
+        <ReviewForm id={id} modalReviewFormActive={modalReviewFormActive} setModalReviewFormActive={setModalReviewFormActive}/>
       </div>
       <ul className="review-block__list">
-        {sortReview.slice(0, 3).map((reviewId) => <ReviewList key={reviewId.id} reviewId={reviewId}/>)}
+        {sortReview.slice(0, showingReviews).map((reviewId) => <ReviewList key={reviewId.id} reviewId={reviewId}/>)}
       </ul>
       <div className="review-block__buttons">
-        <button className="btn btn--purple" type="button" onClick={handleReviewClick}>
-          Показать больше отзывов
-        </button>
+        {reviewsLength > showingReviews &&
+          <button className="btn btn--purple" type="button" onClick={handleReviewClick}>
+            Показать больше отзывов
+          </button>}
       </div>
     </div>
   );

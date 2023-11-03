@@ -32,6 +32,13 @@ function Product(): React.JSX.Element {
     };
   }, [dispatch, id]);
 
+  const handleUpBtnClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   if(!product || !id) {
     return (
       <div></div>
@@ -88,7 +95,7 @@ function Product(): React.JSX.Element {
           </div>
         </div>
       </main>
-      <a className="up-btn" href="#header">
+      <a className='up-btn' onClick={handleUpBtnClick}>
         <svg width={12} height={18} aria-hidden="true">
           <use xlinkHref="#icon-arrow2" />
         </svg>
