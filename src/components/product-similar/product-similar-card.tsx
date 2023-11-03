@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { TProduct } from '../../types/product';
 import Rating from '../rating/rating';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
+import styles from './product.-similar.module.css';
 
 type TProductsSimilarCardProps = {
   product: TProduct;
@@ -13,7 +14,7 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
 
   return (
-    <div className="product-card is-active">
+    <div className={`product-card is-active ${styles.productSimilarSliderListActive}`}>
       <div className="product-card__img">
         <picture>
           <source

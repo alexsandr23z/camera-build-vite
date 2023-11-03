@@ -10,3 +10,5 @@ export type TReview = {
 }
 
 export type TReviews = TReview[];
+
+export type TAddReview = Omit<TReview, 'id' | 'createAt'>;

@@ -28,3 +28,4 @@ const productsSimilarSlices = createSlice({
 
 export default productsSimilarSlices.reducer;
 export const { dropProductsSimilar } = productsSimilarSlices.actions;
+

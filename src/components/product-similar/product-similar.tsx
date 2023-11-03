@@ -1,25 +1,44 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { TProducts } from '../../types/product';
 import ProductSimilarCard from '../../components/product-similar/product-similar-card';
+import { PRODUCT_SIMILAR_STEP } from '../../consts';
 
 type TProductsSimilarProps = {
   productsSimilar: TProducts;
 }
 
 function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.Element {
-  console.log(productsSimilar);
+  const [showingProductsSimilarStart, setShowingProductsSimilarStart] = useState(0);
+  const [showingProductsSimilarEnd, setShowingProductsSimilarEnd] = useState(3);
+  const productsSimilarLength = productsSimilar.length;
+
+  const handleNextClick = () => {
+    setShowingProductsSimilarStart(showingProductsSimilarStart + PRODUCT_SIMILAR_STEP);
+    setShowingProductsSimilarEnd(showingProductsSimilarEnd + PRODUCT_SIMILAR_STEP);
+  };
+
+  const handlePrevClick = () => {
+    setShowingProductsSimilarStart(showingProductsSimilarStart - PRODUCT_SIMILAR_STEP);
+    setShowingProductsSimilarEnd(showingProductsSimilarEnd - PRODUCT_SIMILAR_STEP);
+  };
+
+  if(!productsSimilar) {
+    return <div></div>;
+  }
 
   return (
     <section className='product-similar'>
       <div className="container">
         <h2 className="title title--h3">Похожие товары</h2>
         <div className="product-similar__slider">
-          <div className="product-similar__slider-list">
-            {productsSimilar.slice(0, 3).map((product) => (
-              <ProductSimilarCard key={product.id} product={product} />
+          <div className='product-similar__slider-list'>
+            {productsSimilar.slice(showingProductsSimilarStart, showingProductsSimilarEnd).map((product) => (
+              <ProductSimilarCard key={product.id} product={product}/>
             ))}
           </div>
           <button
+            onClick={handlePrevClick}
+            disabled={showingProductsSimilarStart === 0}
             className="slider-controls slider-controls--prev"
             type="button"
             aria-label="Предыдущий слайд"
@@ -29,6 +48,8 @@ function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.E
             </svg>
           </button>
           <button
+            onClick={handleNextClick}
+            disabled={showingProductsSimilarEnd === productsSimilarLength}
             className="slider-controls slider-controls--next"
             type="button"
             aria-label="Следующий слайд"

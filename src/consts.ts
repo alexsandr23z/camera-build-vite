@@ -1,7 +1,7 @@
 export const MAX_COUNT_PRODUCTS = 9;
 export const MAX_COUNT_STARS = 5;
 export const PAGINATION_PAGES_LENGTH = 3;
-
+export const PRODUCT_SIMILAR_STEP = 3;
 
 export enum AppRoute {
   Main = '/',
@@ -32,6 +32,19 @@ export enum ApiRoute {
   PromoProducts = '/promo',
   Similar = '/similar',
   Reviews = '/reviews',
+}
+
+export const ratingAndTitle = {
+  '1': 'terribly',
+  '2': 'badly',
+  '3': 'normally',
+  '4': 'well',
+  '5': 'great'
+};
+
+export enum ReviewLength {
+  Min = 2,
+  Max = 160
 }
 
 
