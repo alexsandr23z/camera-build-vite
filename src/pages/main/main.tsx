@@ -3,7 +3,7 @@ import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
-import { fetchProducts } from '../../store/api-action/products-api';
+import { fetchProducts } from '../../store/api-action/products-api/products-api';
 import ProductsCard from '../../components/products-card/products-card';
 import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';

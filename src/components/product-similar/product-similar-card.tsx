@@ -32,7 +32,7 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
       </div>
       <div className="product-card__info">
         <Rating rating={product.rating} reviewCount={product.reviewCount} />
-        <p className="product-card__title">{product.name}</p>
+        <p className="product-card__title" data-testid="product-title">{product.name}</p>
         <p className="product-card__price">
           <span className="visually-hidden">Цена:</span>{`${product.price}₽`}
         </p>

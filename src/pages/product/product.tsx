@@ -6,12 +6,12 @@ import ProductCardInfo from '../../components/product-card-info/product-card-inf
 import {Link} from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import {useParams} from 'react-router-dom';
-import { fetchProduct } from '../../store/api-action/product-api';
-import { dropProduct } from '../../store/slices/product-slices';
+import { fetchProduct } from '../../store/api-action/product-api/product-api';
+import { dropProduct } from '../../store/slices/product-slices/product-slices';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
 import ProductSimilar from '../../components/product-similar/product-similar';
-import { fetchProductsSimilar } from '../../store/api-action/product-similar-api';
-import { dropProductsSimilar } from '../../store/slices/product-similar-slices';
+import { fetchProductsSimilar } from '../../store/api-action/product-similar-api/product-similar-api';
+import { dropProductsSimilar } from '../../store/slices/product-similar-slices/product-similar-slices';
 import ReviewBlock from '../../components/review/review-block';
 
 function Product(): React.JSX.Element {
@@ -39,7 +39,7 @@ function Product(): React.JSX.Element {
     });
   };
 
-  if(!product || !id) {
+  if(!product) {
     return (
       <div></div>
     );
@@ -95,7 +95,7 @@ function Product(): React.JSX.Element {
           </div>
         </div>
       </main>
-      <a className='up-btn' onClick={handleUpBtnClick}>
+      <a className="up-btn" onClick={handleUpBtnClick}>
         <svg width={12} height={18} aria-hidden="true">
           <use xlinkHref="#icon-arrow2" />
         </svg>

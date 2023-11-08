@@ -31,12 +31,13 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
         </picture>
       </div>
       <div className="product__content">
-        <h1 className="title title--h3">{name}</h1>
+        <h1 className="title title--h3" data-testid="product-title">{name}</h1>
         <Rating rating={rating} reviewCount={reviewCount}/>
         <p className="product__price">
           <span className="visually-hidden">Цена:</span>{`${price}₽`}
         </p>
         <button className="btn btn--purple" type="button"
+          data-testid="add-to-cart-button"
           onClick={() => {
             document.body.style.overflow = 'hidden';
             setModalAddProductActive(true);

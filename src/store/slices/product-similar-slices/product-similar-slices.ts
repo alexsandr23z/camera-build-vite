@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TProducts } from '../../types/product';
-import { fetchProductsSimilar } from '../api-action/product-similar-api';
+import { TProducts } from '../../../types/product';
+import { fetchProductsSimilar } from '../../api-action/product-similar-api/product-similar-api';
 
 type TProductsSimilarState = {
   productsSimilar: TProducts;

@@ -34,7 +34,7 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
       </div>
       <div className="product-card__info">
         <Rating rating={rating} reviewCount={reviewCount}/>
-        <p className="product-card__title">
+        <p className="product-card__title" data-testid="product-title">
           {name}
         </p>
         <p className="product-card__price">

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useAppDispatch, useAppSelector } from '../hook';
-import { fetchReviews } from '../../store/api-action/review-api';
+import { fetchReviews } from '../../store/api-action/review-api/review-api';
 import ReviewList from './review-list';
 import ReviewForm from './review-form';
 

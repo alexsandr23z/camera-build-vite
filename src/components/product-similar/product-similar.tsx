@@ -42,6 +42,7 @@ function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.E
             className="slider-controls slider-controls--prev"
             type="button"
             aria-label="Предыдущий слайд"
+            data-testid="slider-prev-button"
           >
             <svg width={7} height={12} aria-hidden="true">
               <use xlinkHref="#icon-arrow" />
@@ -53,6 +54,7 @@ function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.E
             className="slider-controls slider-controls--next"
             type="button"
             aria-label="Следующий слайд"
+            data-testid="slider-next-button"
           >
             <svg width={7} height={12} aria-hidden="true">
               <use xlinkHref="#icon-arrow" />
