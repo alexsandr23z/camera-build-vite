@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { fetchPromoProducts } from '../../store/api-action/promo-products-api';
+import { fetchPromoProducts } from '../../store/api-action/promo-products-api/promo-products-api';
 import Banner from '../../components/banner/banner';
 import styles from './swiper-slide.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -22,7 +22,6 @@ function SwiperSlides(): React.JSX.Element {
       effect={'coverflow'}
       grabCursor
       centeredSlides
-      loop
       coverflowEffect={{
         rotate: 0,
         stretch: 0,

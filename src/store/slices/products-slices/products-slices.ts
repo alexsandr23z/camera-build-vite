@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TProducts } from '../../types/product';
-import { fetchProducts } from '../api-action/products-api';
+import { TProducts } from '../../../types/product';
+import { fetchProducts } from '../../api-action/products-api/products-api';
 
 type TProductsState = {
   products: TProducts;

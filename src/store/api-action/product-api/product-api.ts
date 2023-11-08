@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AppDispatch, State } from '../../types/state';
+import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance } from 'axios';
-import { ApiRoute } from '../../consts';
-import { TProduct } from '../../types/product';
+import { ApiRoute } from '../../../consts';
+import { TProduct } from '../../../types/product';
 
 export const fetchProduct = createAsyncThunk<TProduct, Pick<TProduct, 'id'>, {
   dispatch: AppDispatch;

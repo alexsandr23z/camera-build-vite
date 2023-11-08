@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AppDispatch, State } from '../../types/state.ts';
+import { AppDispatch, State } from '../../../types/state.ts';
 import { AxiosInstance } from 'axios';
-import { TAddReview, TReview, TReviews } from '../../types/review.ts';
-import { TProduct } from '../../types/product.ts';
-import { ApiRoute } from '../../consts.ts';
-import { addReview, clearFormReview } from '../slices/review-slices.ts';
+import { TAddReview, TReview, TReviews } from '../../../types/review.ts';
+import { TProduct } from '../../../types/product.ts';
+import { ApiRoute } from '../../../consts.ts';
+import { addReview, clearFormReview } from '../../slices/review-slices/review-slices.ts';
 
 export const fetchReviews = createAsyncThunk<TReviews, Pick<TProduct, 'id'>, {
   dispatch: AppDispatch;

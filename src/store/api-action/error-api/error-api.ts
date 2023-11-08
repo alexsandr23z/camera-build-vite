@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { store } from '../index.ts';
-import { setError } from '../action';
+import { store } from '../../index.ts';
+import { setError } from '../../action.ts';
 
 
 const TIMEOUT_SHOW_ERROR = 2000;

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PAGINATION_PAGES_LENGTH } from '../../consts';
+import { PAGINATION_PAGES_LENGTH } from '../../../consts';
 
 type TPaginationState = {
   limit: number;

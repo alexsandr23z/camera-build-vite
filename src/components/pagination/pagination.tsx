@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { MAX_COUNT_PRODUCTS } from '../../consts';
 import {Link, useSearchParams} from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hook';
-import { decrementPagination, incrementPagination, setCurrentPage } from '../../store/slices/pagination-slices';
+import { decrementPagination, incrementPagination, setCurrentPage } from '../../store/slices/pagination-slices/pagination-slices';
 
 type TPaginationProps = {
   paginationCount: number;

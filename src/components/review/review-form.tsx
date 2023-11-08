@@ -1,8 +1,8 @@
 import React, { ChangeEvent, Fragment, useEffect, useState } from 'react';
 import { ReviewLength, ratingAndTitle } from '../../consts';
 import { useAppDispatch, useAppSelector } from '../hook';
-import { setFormReviewValid, updateAdvantage, updateDisadvantage, updateRating, updateReview, updateUserName } from '../../store/slices/review-slices';
-import { submitReview } from '../../store/api-action/review-api';
+import { setFormReviewValid, updateAdvantage, updateDisadvantage, updateRating, updateReview, updateUserName } from '../../store/slices/review-slices/review-slices';
+import { submitReview } from '../../store/api-action/review-api/review-api';
 import { TProduct } from '../../types/product';
 import ReviewModalThanksPurchase from './review-modal-thanks-purchase';
 

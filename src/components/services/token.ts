@@ -1,4 +1,4 @@
-const AUTH_TOKEN_KEY_NAME = 'guess-token';
+export const AUTH_TOKEN_KEY_NAME = 'guess-token';
 
 export type Token = string;
 
