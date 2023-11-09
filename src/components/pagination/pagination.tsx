@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import { MAX_COUNT_PRODUCTS } from '../../consts';
 import {Link, useSearchParams} from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hook';
@@ -25,8 +25,18 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
     lastPaginationNumbers.push(index);
   }
 
+  const isMountedRef = useRef(false);
+
   useEffect(() => {
-    if(currentPage) {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if(currentPage && isMountedRef) {
       if(paginationPages[0] >= currentPage) {
         dispatch(setCurrentPage(paginationPages[0]));
       } else if(paginationPages[2] <= currentPage) {
@@ -34,17 +44,17 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
       }
       setSearchParams({page: `${currentPage}`});
     }
-  }, [currentPage, dispatch, end, page, paginationPages, setSearchParams]);
+  }, [currentPage, dispatch, end, page, paginationPages, setSearchParams, isMountedRef]);
 
   useEffect(() => {
-    if(page) {
+    if(page && isMountedRef) {
       dispatch(setCurrentPage(Number(page)));
       if(Number(page) > paginationPages[2]) {
         dispatch(incrementPagination());
         dispatch(setCurrentPage(Number(page)));
       }
     }
-  }, [dispatch, page, currentPage, paginationPages, end]);
+  }, [dispatch, page, currentPage, paginationPages, end, isMountedRef]);
 
   const handlePaginationClick = (pageNumber: number) => {
     dispatch(setCurrentPage(pageNumber));

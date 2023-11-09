@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { TProduct } from '../../types/product';
 import {useSearchParams} from 'react-router-dom';
 
@@ -14,13 +14,25 @@ function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
   const specifications: string | null = searchParams.get('specifications');
   const descriptions: string | null = searchParams.get('descriptions');
 
+  const isMountedRef = useRef(false);
+
   useEffect(() => {
-    if(productTabsActive === 0) {
-      setSearchParams({specifications: 'Характеристики'});
-    } else if(productTabsActive === 1) {
-      setSearchParams({descriptions: 'Описание'});
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if(isMountedRef) {
+      if(productTabsActive === 0) {
+        setSearchParams({specifications: 'Характеристики'});
+      } else if(productTabsActive === 1) {
+        setSearchParams({descriptions: 'Описание'});
+      }
     }
-  }, [specifications, descriptions, setSearchParams, productTabsActive]);
+  }, [specifications, descriptions, setSearchParams, productTabsActive, isMountedRef]);
 
   const handleSpecificationsClick = () => {
     setProductTabsActive(0);

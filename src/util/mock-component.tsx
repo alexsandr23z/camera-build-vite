@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import thunk from 'redux-thunk';
 import { Action } from 'redux';
 import { Provider } from 'react-redux';
-import { createApi } from '../components/services/api';
+import { createApi } from '../services/api';
 
 export type AppThunkDispatch = ThunkDispatch<State, ReturnType<typeof createApi>, Action>;
 

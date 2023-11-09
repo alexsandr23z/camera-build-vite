@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
@@ -20,12 +20,22 @@ function Main(): React.JSX.Element {
   const productsLength = products.length;
   const paginationCount: number = Math.ceil(productsLength / limit);
 
+  const isMountedRef = useRef(false);
+
   useEffect(() => {
-    if(minProductIndex !== null && maxProductIndex) {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if(minProductIndex !== null && maxProductIndex && isMountedRef) {
       const showingProducts = products.slice(minProductIndex, maxProductIndex);
       setShowingCards(showingProducts);
     }
-  }, [maxProductIndex, minProductIndex, products]);
+  }, [maxProductIndex, minProductIndex, products, isMountedRef]);
 
   useEffect(() => {
     dispatch(fetchProducts());

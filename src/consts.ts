@@ -2,6 +2,8 @@ export const MAX_COUNT_PRODUCTS = 9;
 export const MAX_COUNT_STARS = 5;
 export const PAGINATION_PAGES_LENGTH = 3;
 export const PRODUCT_SIMILAR_STEP = 3;
+export const PRODUCT_SIMILAR_END = 3;
+export const PRODUCT_SIMILAR_START = 0;
 
 export enum AppRoute {
   Main = '/',

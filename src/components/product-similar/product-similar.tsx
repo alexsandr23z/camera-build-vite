@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
 import { TProducts } from '../../types/product';
 import ProductSimilarCard from '../../components/product-similar/product-similar-card';
-import { PRODUCT_SIMILAR_STEP } from '../../consts';
+import { PRODUCT_SIMILAR_END, PRODUCT_SIMILAR_START, PRODUCT_SIMILAR_STEP } from '../../consts';
 
 type TProductsSimilarProps = {
   productsSimilar: TProducts;
 }
 
 function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.Element {
-  const [showingProductsSimilarStart, setShowingProductsSimilarStart] = useState(0);
-  const [showingProductsSimilarEnd, setShowingProductsSimilarEnd] = useState(3);
+  const [showingProductsSimilarStart, setShowingProductsSimilarStart] = useState(PRODUCT_SIMILAR_START);
+  const [showingProductsSimilarEnd, setShowingProductsSimilarEnd] = useState(PRODUCT_SIMILAR_END);
   const productsSimilarLength = productsSimilar.length;
 
   const handleNextClick = () => {
