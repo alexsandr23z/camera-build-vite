@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Fragment, useEffect } from 'react';
+import React, { ChangeEvent, Fragment, useEffect, useRef, useCallback } from 'react';
 import { ReviewLength, ratingAndTitle } from '../../consts';
 import { useAppDispatch, useAppSelector } from '../hook';
 import { setFormReviewValid, setIsSends, updateAdvantage, updateDisadvantage, updateRating, updateReview, updateUserName } from '../../store/slices/review-slices/review-slices';
@@ -75,8 +75,43 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
     }
   }
 
+  const refOuter = useRef<HTMLDivElement | null>(null);
+  const refFirstFocusable = useRef<HTMLElement | null>(null);
+  const refLastFocusable = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const focusableElements = Array.from<HTMLElement>(
+      refOuter.current?.querySelectorAll('[tabindex]') ?? []
+    );
+
+    refFirstFocusable.current = focusableElements[0];
+    refLastFocusable.current = focusableElements[focusableElements.length - 1];
+
+    refFirstFocusable.current.focus();
+  }, []);
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+
+    if (
+      document.activeElement === refLastFocusable.current &&
+      e.key === 'Tab' &&
+      !e.shiftKey
+    ) {
+      e.preventDefault();
+      refFirstFocusable.current?.focus();
+    }
+    if (
+      document.activeElement === refFirstFocusable.current &&
+      e.key === 'Tab' &&
+      e.shiftKey
+    ) {
+      e.preventDefault();
+      refLastFocusable.current?.focus();
+    }
+  }, []);
+
   return (
-    <div className={modalReviewFormActive ? 'modal is-active' : 'modal'}>
+    <div ref={refOuter} onKeyDown={onKeyDown} className={modalReviewFormActive ? 'modal is-active' : 'modal'}>
       <div className="modal__wrapper" onClick={(e) => e.stopPropagation()}>
         <div className="modal__overlay" onClick={handleOnClose}/>
         <div className="modal__content">
@@ -103,6 +138,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                             value={rating}
                             checked={String(formData.rating) === rating}
                             onChange={handleRatingChange}
+                            tabIndex={0}
                           />
                           <label
                             className="rate__label"
@@ -134,6 +170,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                       value={formData.userName}
                       maxLength={ReviewLength.Max}
                       onChange={handleUserNameChange}
+                      tabIndex={0}
                     />
                   </label>
                   <p className='custom-input__error'>Нужно указать имя
@@ -156,6 +193,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                       value={formData.advantage}
                       maxLength={ReviewLength.Max}
                       onChange={handleAdvantageChange}
+                      tabIndex={0}
                     />
                   </label>
                   <p className="custom-input__error">Нужно указать достоинства</p>
@@ -177,6 +215,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                       value={formData.disadvantage}
                       maxLength={ReviewLength.Max}
                       onChange={handleDisadvantageChange}
+                      tabIndex={0}
                     />
                   </label>
                   <p className="custom-input__error">Нужно указать недостатки</p>
@@ -197,6 +236,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                       value={formData.review}
                       maxLength={ReviewLength.Max}
                       onChange={handleReviewChange}
+                      tabIndex={0}
                     />
                   </label>
                   <div className="custom-textarea__error">
@@ -204,7 +244,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
                   </div>
                 </div>
               </div>
-              <button className="btn btn--purple form-review__btn" type="submit" onClick={() => {
+              <button tabIndex={0} className="btn btn--purple form-review__btn" type="submit" onClick={() => {
                 if(formData.isValid) {
                   setModalThanksPurchaseActive(true);
                   document.body.style.overflow = 'hidden';
@@ -216,7 +256,7 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
               </button>
             </form>
           </div>
-          <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleOnClose}>
+          <button tabIndex={0} className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleOnClose}>
             <svg width={10} height={10} aria-hidden="true">
               <use xlinkHref="#icon-close" />
             </svg>

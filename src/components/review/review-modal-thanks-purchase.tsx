@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useCallback, useRef} from 'react';
 
 type TReviewModalThanksPurchaseProps = {
   modalThanksPurchaseActive: boolean;
@@ -21,8 +21,43 @@ function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPu
     setModalThanksPurchaseActive(false);
   };
 
+  const refOuter = useRef<HTMLDivElement | null>(null);
+  const refFirstFocusable = useRef<HTMLElement | null>(null);
+  const refLastFocusable = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const focusableElements = Array.from<HTMLElement>(
+      refOuter.current?.querySelectorAll('[tabindex]') ?? []
+    );
+
+    refFirstFocusable.current = focusableElements[0];
+    refLastFocusable.current = focusableElements[focusableElements.length - 1];
+
+    refFirstFocusable.current.focus();
+  }, []);
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+
+    if (
+      document.activeElement === refLastFocusable.current &&
+      e.key === 'Tab' &&
+      !e.shiftKey
+    ) {
+      e.preventDefault();
+      refFirstFocusable.current?.focus();
+    }
+    if (
+      document.activeElement === refFirstFocusable.current &&
+      e.key === 'Tab' &&
+      e.shiftKey
+    ) {
+      e.preventDefault();
+      refLastFocusable.current?.focus();
+    }
+  }, []);
+
   return (
-    <div className={modalThanksPurchaseActive ? 'modal is-active modal--narrow' : 'modal'}>
+    <div ref={refOuter} onKeyDown={onKeyDown} className={modalThanksPurchaseActive ? 'modal is-active modal--narrow' : 'modal'}>
       <div className="modal__wrapper" onClick={(e) => e.stopPropagation()}>
         <div className='modal__overlay' onClick={handleOnClose}/>
         <div className="modal__content">
@@ -31,7 +66,7 @@ function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPu
             <use xlinkHref="#icon-review-success" />
           </svg>
           <div className="modal__buttons">
-            <button onClick={() => {
+            <button tabIndex={0} onClick={() => {
               document.body.style.overflow = 'unset';
               setModalThanksPurchaseActive(false);
             }}
@@ -41,7 +76,7 @@ function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPu
               Вернуться к покупкам
             </button>
           </div>
-          <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleOnClose}>
+          <button tabIndex={0} className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleOnClose}>
             <svg width={10} height={10} aria-hidden="true">
               <use xlinkHref="#icon-close" />
             </svg>
