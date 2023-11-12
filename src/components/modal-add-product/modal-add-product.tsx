@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useCallback, useRef} from 'react';
 import { TProduct } from '../../types/product';
 
 type TModalAddProductProps = {
@@ -26,8 +26,43 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
     setModalAddProductActive(false);
   };
 
+  const refOuter = useRef<HTMLDivElement | null>(null);
+  const refFirstFocusable = useRef<HTMLElement | null>(null);
+  const refLastFocusable = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const focusableElements = Array.from<HTMLElement>(
+      refOuter.current?.querySelectorAll('[tabindex]') ?? []
+    );
+
+    refFirstFocusable.current = focusableElements[0];
+    refLastFocusable.current = focusableElements[focusableElements.length - 1];
+
+    refFirstFocusable.current.focus();
+  }, []);
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+
+    if (
+      document.activeElement === refLastFocusable.current &&
+      e.key === 'Tab' &&
+      !e.shiftKey
+    ) {
+      e.preventDefault();
+      refFirstFocusable.current?.focus();
+    }
+    if (
+      document.activeElement === refFirstFocusable.current &&
+      e.key === 'Tab' &&
+      e.shiftKey
+    ) {
+      e.preventDefault();
+      refLastFocusable.current?.focus();
+    }
+  }, []);
+
   return (
-    <div className={modalAddProductActive ? 'modal is-active' : 'modal'}>
+    <div ref={refOuter} onKeyDown={onKeyDown} className={modalAddProductActive ? 'modal is-active' : 'modal'}>
       <div className="modal__wrapper" onClick={(e) => e.stopPropagation()}>
         <div className='modal__overlay' onClick={handleOnClose}/>
         <div className="modal__content">
@@ -65,6 +100,7 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
           </div>
           <div className="modal__buttons">
             <button
+              tabIndex={0}
               className="btn btn--purple modal__btn modal__btn--fit-width"
               type="button"
             >
@@ -74,7 +110,7 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
               Добавить в корзину
             </button>
           </div>
-          <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleOnClose}>
+          <button className="cross-btn" type="button" aria-label="Закрыть попап" tabIndex={0} onClick={handleOnClose}>
             <svg width={10} height={10} aria-hidden={'true'}>
               <use xlinkHref="#icon-close" />
             </svg>
