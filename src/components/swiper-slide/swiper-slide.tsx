@@ -42,7 +42,7 @@ function SwiperSlides(): React.JSX.Element {
         </SwiperSlide>
       ))}
       <div className={styles.swiperWrapper}>
-        <div className={`swiper-pagination ${styles.bulletClass} ${styles.bulletActiveClass}`}>
+        <div className={`swiper-pagination ${styles.bulletClass}`}>
         </div>
       </div>
     </Swiper>

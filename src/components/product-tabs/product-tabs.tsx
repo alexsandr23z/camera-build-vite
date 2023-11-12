@@ -1,64 +1,44 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { TProduct } from '../../types/product';
-import {useSearchParams} from 'react-router-dom';
-import { setProductTabs } from '../../store/slices/product-tabs/product-tabs-slices';
-import { useAppDispatch } from '../hook';
+import {useLocation, useNavigate} from 'react-router-dom';
+import { ProductTabsSearch } from '../../consts';
 
 type TProductTabsProps = {
   product: TProduct;
 }
 
 function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
-  const dispatch = useAppDispatch();
-  const [productTabsActive, setProductTabsActive] = useState(0);
-  const {vendorCode, type, category, description, level} = product;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const {vendorCode, type, category, level, description} = product;
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const specifications: string | null = searchParams.get('specifications');
-  const descriptions: string | null = searchParams.get('descriptions');
-
-  const isMountedRef = useRef(false);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+  const [activeTab, setActiveTab] = useState<string>(
+    location.hash ||
+    ProductTabsSearch.Specifications
+  );
 
   useEffect(() => {
-    if(isMountedRef) {
-      if(productTabsActive === 0) {
-        setSearchParams({specifications: 'Характеристики'});
-        dispatch(setProductTabs(String(specifications)));
-      } else if(productTabsActive === 1) {
-        setSearchParams({descriptions: 'Описание'});
-        dispatch(setProductTabs(String(descriptions)));
-      }
-    }
-  }, [specifications, descriptions, setSearchParams, productTabsActive, isMountedRef, dispatch]);
-
-  const handleSpecificationsClick = () => {
-    setProductTabsActive(0);
-  };
-
-  const handleDescriptionsClick = () => {
-    setProductTabsActive(1);
-  };
+    navigate(activeTab);
+  }, [activeTab, navigate]);
 
   return (
     <div className="tabs product__tabs">
       <div className="tabs__controls product__tabs-controls">
-        <button className={`tabs__control ${productTabsActive === 0 ? 'is-active' : ''}`} type="button" onClick={handleSpecificationsClick}>
+        <button className={`tabs__control ${activeTab === ProductTabsSearch.Specifications ? 'is-active' : ''}`}
+          type="button"
+          onClick={() => setActiveTab(ProductTabsSearch.Specifications)}
+        >
           Характеристики
         </button>
-        <button className={`tabs__control ${productTabsActive === 1 ? 'is-active' : ''}`} type="button" onClick={handleDescriptionsClick}>
+        <button className={`tabs__control ${activeTab === ProductTabsSearch.Description ? 'is-active' : ''}`}
+          type="button"
+          onClick={() => setActiveTab(ProductTabsSearch.Description)}
+        >
           Описание
         </button>
       </div>
       <div className="tabs__content">
-        <div className={`tabs__element ${productTabsActive === 0 ? 'is-active' : ''}`}>
+        <div className={`tabs__element ${activeTab === ProductTabsSearch.Specifications ? 'is-active' : ''}`}>
           <ul className="product__tabs-list">
             <li className="item-list">
               <span className="item-list__title">Артикул:</span>
@@ -78,7 +58,7 @@ function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
             </li>
           </ul>
         </div>
-        <div className={`tabs__element ${productTabsActive === 1 ? 'is-active' : ''}`}>
+        <div className={`tabs__element ${activeTab === ProductTabsSearch.Description ? 'is-active' : ''}`}>
           <div className="product__tabs-text">
             <p>
               {description}

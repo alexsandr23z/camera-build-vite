@@ -49,4 +49,7 @@ export enum ReviewLength {
   Max = 160
 }
 
-
+export enum ProductTabsSearch {
+  Specifications = '#specifications',
+  Description = '#description'
+}
