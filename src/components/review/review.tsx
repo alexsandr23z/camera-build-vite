@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../hook';
 import { fetchReviews } from '../../store/api-action/review-api/review-api';
 import ReviewList from './review-list';
 import ReviewForm from './review-form';
+import ReviewModalThanksPurchase from './review-modal-thanks-purchase';
 
 
 type TReviewBlockProps = {
@@ -15,6 +16,7 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
   const sortReview = [...reviews].sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
   const [modalReviewFormActive, setModalReviewFormActive] = useState(false);
   const [showingReviews, setShowingReviews] = useState(3);
+  const [modalThanksPurchaseActive, setModalThanksPurchaseActive] = useState(false);
   const reviewsLength = sortReview.length;
 
   useEffect(() => {
@@ -38,8 +40,9 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
         >
           Оставить свой отзыв
         </button>
-        <ReviewForm id={id} modalReviewFormActive={modalReviewFormActive} setModalReviewFormActive={setModalReviewFormActive}/>
+        <ReviewForm id={id} modalReviewFormActive={modalReviewFormActive} setModalReviewFormActive={setModalReviewFormActive} setModalThanksPurchaseActive={setModalThanksPurchaseActive}/>
       </div>
+      <ReviewModalThanksPurchase modalThanksPurchaseActive={modalThanksPurchaseActive} setModalThanksPurchaseActive={setModalThanksPurchaseActive}/>
       <ul className="review-block__list">
         {sortReview.slice(0, showingReviews).map((reviewId) => <ReviewList key={reviewId.id} reviewId={reviewId}/>)}
       </ul>

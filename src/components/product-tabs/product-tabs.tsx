@@ -1,12 +1,15 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { TProduct } from '../../types/product';
 import {useSearchParams} from 'react-router-dom';
+import { setProductTabs } from '../../store/slices/product-tabs/product-tabs-slices';
+import { useAppDispatch } from '../hook';
 
 type TProductTabsProps = {
   product: TProduct;
 }
 
 function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const [productTabsActive, setProductTabsActive] = useState(0);
   const {vendorCode, type, category, description, level} = product;
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,11 +31,13 @@ function ProductTabs({product}: TProductTabsProps): React.JSX.Element {
     if(isMountedRef) {
       if(productTabsActive === 0) {
         setSearchParams({specifications: 'Характеристики'});
+        dispatch(setProductTabs(String(specifications)));
       } else if(productTabsActive === 1) {
         setSearchParams({descriptions: 'Описание'});
+        dispatch(setProductTabs(String(descriptions)));
       }
     }
-  }, [specifications, descriptions, setSearchParams, productTabsActive, isMountedRef]);
+  }, [specifications, descriptions, setSearchParams, productTabsActive, isMountedRef, dispatch]);
 
   const handleSpecificationsClick = () => {
     setProductTabsActive(0);

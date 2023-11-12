@@ -3,10 +3,9 @@ import React, {useEffect} from 'react';
 type TReviewModalThanksPurchaseProps = {
   modalThanksPurchaseActive: boolean;
   setModalThanksPurchaseActive: (arg: boolean) => void;
-  setModalReviewFormActive: (arg: boolean) => void;
 }
 
-function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPurchaseActive, setModalReviewFormActive}: TReviewModalThanksPurchaseProps): React.JSX.Element {
+function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPurchaseActive}: TReviewModalThanksPurchaseProps): React.JSX.Element {
   useEffect(() => {
     function handleEscapeKey(event: KeyboardEvent) {
       if (event.code === 'Escape') {
@@ -35,7 +34,6 @@ function ReviewModalThanksPurchase({ modalThanksPurchaseActive, setModalThanksPu
             <button onClick={() => {
               document.body.style.overflow = 'unset';
               setModalThanksPurchaseActive(false);
-              setModalReviewFormActive(false);
             }}
             className="btn btn--purple modal__btn modal__btn--fit-width"
             type="button"

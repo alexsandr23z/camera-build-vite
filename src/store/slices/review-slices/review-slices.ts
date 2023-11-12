@@ -61,7 +61,10 @@ const reviewsSlices = createSlice({
       state.disadvantage = '';
       state.review = '';
       state.rating = 0;
-    }
+    },
+    setIsSends(state) {
+      state.isSends = true;
+    },
   },
   extraReducers(builder) {
     builder
@@ -83,4 +86,4 @@ const reviewsSlices = createSlice({
 export default reviewsSlices.reducer;
 
 export const {addReview, updateAdvantage, updateDisadvantage,
-  updateRating, updateReview, updateUserName, setFormReviewValid, clearFormReview} = reviewsSlices.actions;
+  updateRating, updateReview, updateUserName, setFormReviewValid, clearFormReview, setIsSends} = reviewsSlices.actions;

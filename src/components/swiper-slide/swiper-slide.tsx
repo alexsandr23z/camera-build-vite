@@ -22,6 +22,7 @@ function SwiperSlides(): React.JSX.Element {
       effect={'coverflow'}
       grabCursor
       centeredSlides
+      slidesPerView={1}
       coverflowEffect={{
         rotate: 0,
         stretch: 0,
@@ -41,7 +42,8 @@ function SwiperSlides(): React.JSX.Element {
         </SwiperSlide>
       ))}
       <div className={styles.swiperWrapper}>
-        <div className={`swiper-pagination ${styles.bulletClass}`}></div>
+        <div className={`swiper-pagination ${styles.bulletClass} ${styles.bulletActiveClass}`}>
+        </div>
       </div>
     </Swiper>
   );

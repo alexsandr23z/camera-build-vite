@@ -5,6 +5,7 @@ import paginationSlices from './slices/pagination-slices/pagination-slices';
 import productSlices from './slices/product-slices/product-slices';
 import productSimilarSlices from './slices/product-similar-slices/product-similar-slices';
 import reviewSlices from './slices/review-slices/review-slices';
+import productTabsSlices from './slices/product-tabs/product-tabs-slices';
 
 export const rootReducer = combineReducers({
   products: productsSlices,
@@ -13,4 +14,5 @@ export const rootReducer = combineReducers({
   pagination: paginationSlices,
   productsSimilar: productSimilarSlices,
   reviews: reviewSlices,
+  productTabs: productTabsSlices,
 });

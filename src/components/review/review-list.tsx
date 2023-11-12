@@ -2,6 +2,7 @@ import React from 'react';
 import { TReview } from '../../types/review';
 import { showActiveRateng, showDisabledRateng } from '../../util/util';
 import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 
 type TReviewListProps = {
   reviewId: TReview;
@@ -18,7 +19,7 @@ function ReviewList({ reviewId }: TReviewListProps): React.JSX.Element {
       <div className="review-card__head">
         <p className="title title--h4">{userName}</p>
         <time className="review-card__data" dateTime={createAt}>
-          {dayjs(createAt).format('DD MMMM')}
+          {dayjs(createAt).locale('ru').format('D MMMM')}
         </time>
       </div>
       <div className="rate review-card__rate">

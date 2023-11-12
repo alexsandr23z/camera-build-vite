@@ -17,9 +17,7 @@
 .bulletClass span {
   width: 16px;
   height: 16px;
-  background-color: #7575E2;
+  background-color: rgba(244, 244, 252, 1);
   margin-right: 14px;
 }
-
-
 

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { TProducts } from '../../types/product';
 import ProductSimilarCard from '../../components/product-similar/product-similar-card';
 import { PRODUCT_SIMILAR_END, PRODUCT_SIMILAR_START, PRODUCT_SIMILAR_STEP } from '../../consts';
+import styles from './product.-similar.module.css';
 
 type TProductsSimilarProps = {
   productsSimilar: TProducts;
@@ -39,7 +40,7 @@ function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.E
           <button
             onClick={handlePrevClick}
             disabled={showingProductsSimilarStart === 0}
-            className="slider-controls slider-controls--prev"
+            className={showingProductsSimilarStart === 0 ? `${styles.sliderControls} slider-controls--prev` : 'slider-controls slider-controls--prev'}
             type="button"
             aria-label="Предыдущий слайд"
             data-testid="slider-prev-button"
@@ -51,7 +52,7 @@ function ProductSimilar({ productsSimilar }: TProductsSimilarProps): React.JSX.E
           <button
             onClick={handleNextClick}
             disabled={showingProductsSimilarEnd === productsSimilarLength}
-            className="slider-controls slider-controls--next"
+            className={showingProductsSimilarEnd === productsSimilarLength ? `${styles.sliderControls} slider-controls--next` : 'slider-controls slider-controls--next'}
             type="button"
             aria-label="Следующий слайд"
             data-testid="slider-next-button"

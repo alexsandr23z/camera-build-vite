@@ -60,12 +60,18 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
     dispatch(setCurrentPage(pageNumber));
   };
 
-  const handleIncrementPagination = () => {
-    dispatch(incrementPagination());
+  const handleIncrementPagination = (pageNumber: number) => {
+    if(pageNumber >= paginationPages[2]) {
+      dispatch(incrementPagination());
+    }
+    dispatch(setCurrentPage(pageNumber + 1));
   };
 
-  const handleDecrementPagination = () => {
-    dispatch(decrementPagination());
+  const handleDecrementPagination = (pageNumber: number) => {
+    if(pageNumber <= paginationPages[0]) {
+      dispatch(decrementPagination());
+    }
+    dispatch(setCurrentPage(pageNumber - 1));
   };
 
   if(productsLength < MAX_COUNT_PRODUCTS) {
@@ -77,7 +83,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
       {currentPage && currentPage <= end &&
       <ul className="pagination__list">
         {currentPage > 3 &&
-          <li className="pagination__item" onClick={handleDecrementPagination}>
+          <li className="pagination__item" onClick={() => handleDecrementPagination(Number(page))}>
             <Link
               className="pagination__link pagination__link--text"
               to={'#'}
@@ -105,7 +111,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
           </li>)
         ).reverse()}
         { currentPage <= start &&
-          <li className="pagination__item" onClick={handleIncrementPagination}>
+          <li className="pagination__item" onClick={() => handleIncrementPagination(Number(page))}>
             <Link
               className="pagination__link pagination__link--text"
               to={'#'}
