@@ -50,6 +50,6 @@ export enum ReviewLength {
 }
 
 export enum ProductTabsSearch {
-  Specifications = '?specifications=характеристики',
-  Description = '?description=описание'
+  Specifications = '#specifications',
+  Description = '#description'
 }
