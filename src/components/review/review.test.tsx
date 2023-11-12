@@ -21,13 +21,11 @@ describe('ReviewList component', () => {
 
 describe('ReviewModalThanksPurchase component', () => {
   const setModalThanksPurchaseActive = vi.fn();
-  const setModalReviewFormActive = vi.fn();
   it('renders correctly', () => {
     render(
       <ReviewModalThanksPurchase
         modalThanksPurchaseActive
         setModalThanksPurchaseActive={setModalThanksPurchaseActive}
-        setModalReviewFormActive={setModalReviewFormActive}
       />
     );
     const modalElement = screen.getByText('Спасибо за отзыв');
