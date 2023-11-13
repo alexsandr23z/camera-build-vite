@@ -3651,3 +3651,7 @@ button,
     background-color: #f4f4fc;
   }
 }
+
+.swiper-pagination-bullet-active {
+  background-color: #7575E2 !important;
+ }
