@@ -4,6 +4,7 @@ export const PAGINATION_PAGES_LENGTH = 3;
 export const PRODUCT_SIMILAR_STEP = 3;
 export const PRODUCT_SIMILAR_END = 3;
 export const PRODUCT_SIMILAR_START = 0;
+export const START_SEARCH_FORM = 3;
 
 export enum AppRoute {
   Main = '/',

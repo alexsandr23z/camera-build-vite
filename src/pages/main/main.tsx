@@ -2,15 +2,13 @@ import React, {useEffect, useState, useRef} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
-import { useAppDispatch, useAppSelector } from '../../components/hook';
-import { fetchProducts } from '../../store/api-action/products-api/products-api';
+import { useAppSelector } from '../../components/hook';
 import ProductsCard from '../../components/products-card/products-card';
 import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';
 import { TProduct } from '../../types/product';
 
 function Main(): React.JSX.Element {
-  const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.products.products);
   const minProductIndex = useAppSelector((state) => state.pagination.minProductIndex);
   const maxProductIndex = useAppSelector((state) => state.pagination.maxProductIndex);
@@ -36,10 +34,6 @@ function Main(): React.JSX.Element {
       setShowingCards(showingProducts);
     }
   }, [maxProductIndex, minProductIndex, products, isMountedRef]);
-
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
 
   return (
     <div className="wrapper">

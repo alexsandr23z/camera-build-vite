@@ -1,8 +1,98 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import { AppRoute } from '../../consts';
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AppRoute, START_SEARCH_FORM } from '../../consts';
+import { useAppSelector } from '../hook';
+import { TProduct } from '../../types/product';
 
 function Header(): React.JSX.Element {
+  const products = useAppSelector((state) => state.products.products);
+  const [value, setValue] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState<TProduct[]>([]);
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (listRef.current && selectedItemIndex !== null) {
+      const focusedItem = listRef.current.querySelector('.form-search__select-item.focus');
+      if (focusedItem) {
+        const listRect = listRef.current.getBoundingClientRect();
+        const itemRect = focusedItem.getBoundingClientRect();
+
+        if (itemRect.bottom > listRect.bottom) {
+          listRef.current.scrollTop += itemRect.bottom - listRect.bottom;
+        } else if (itemRect.top < listRect.top) {
+          listRef.current.scrollTop -= listRect.top - itemRect.top;
+        }
+      }
+    }
+  }, [selectedItemIndex]);
+
+  const handleFormSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = evt.target.value;
+    setValue(inputValue);
+
+    if (inputValue.length >= START_SEARCH_FORM) {
+      const resultProducts = products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+      setFilteredProducts(resultProducts);
+      setIsOpen(true);
+    } else {
+      setFilteredProducts([]);
+      setIsOpen(false);
+    }
+  };
+
+  const handleSearchProductsClick = (selectedProduct: TProduct | null) => {
+    if (selectedProduct) {
+      navigate(`${AppRoute.Product}/${selectedProduct.id}`);
+    }
+
+    setIsOpen(false);
+  };
+
+  const handleArrowDown = () => {
+    setSelectedItemIndex((prevIndex) => (prevIndex === null || prevIndex === filteredProducts.length - 1 ? 0 : prevIndex + 1));
+  };
+
+  const handleArrowUp = () => {
+    setSelectedItemIndex((prevIndex) => (prevIndex === null || prevIndex === 0 ? filteredProducts.length - 1 : prevIndex - 1));
+  };
+
+  const handleFormSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' && filteredProducts.length > 0) {
+      e.preventDefault();
+      handleArrowDown();
+    } else if (e.key === 'ArrowUp' && filteredProducts.length > 0) {
+      e.preventDefault();
+      handleArrowUp();
+    }
+  };
+
+  const handleListItemKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, index: number) => {
+    if (e.key === 'Enter' && filteredProducts[index]) {
+      const selectedProduct = filteredProducts[index];
+      handleSearchProductsClick(selectedProduct);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      handleArrowDown();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      handleArrowUp();
+    }
+  };
+
+  const handleReset = () => {
+    setIsOpen(false);
+    setFilteredProducts([]);
+    setValue('');
+    setSelectedItemIndex(null);
+  };
+
   return (
     <header className="header" id="header">
       <div className="container">
@@ -39,7 +129,7 @@ function Header(): React.JSX.Element {
             </li>
           </ul>
         </nav>
-        <div className="form-search">
+        <div className={value.length >= START_SEARCH_FORM && isOpen ? 'form-search list-opened' : 'form-search'}>
           <form>
             <label>
               <svg
@@ -54,28 +144,36 @@ function Header(): React.JSX.Element {
                 className="form-search__input"
                 type="text"
                 autoComplete="off"
+                name="form-search__input"
+                value={value}
                 placeholder="Поиск по сайту"
+                onChange={handleFormSearchChange}
+                onKeyDown={handleFormSearchKeyDown}
               />
             </label>
-            <ul className="form-search__select-list">
-              <li className="form-search__select-item" tabIndex={0}>
-                Cannonball Pro MX 8i
-              </li>
-              <li className="form-search__select-item" tabIndex={0}>
-                Cannonball Pro MX 7i
-              </li>
-              <li className="form-search__select-item" tabIndex={0}>
-                Cannonball Pro MX 6i
-              </li>
-              <li className="form-search__select-item" tabIndex={0}>
-                Cannonball Pro MX 5i
-              </li>
-              <li className="form-search__select-item" tabIndex={0}>
-                Cannonball Pro MX 4i
-              </li>
+            <ul
+              ref={listRef}
+              className="form-search__select-list"
+            >
+              {filteredProducts.map((product, index) => (
+                <li
+                  key={product.id}
+                  className={`form-search__select-item ${index === selectedItemIndex ? 'focus' : ''}`}
+                  tabIndex={0}
+                  onClick={() => handleSearchProductsClick(product)}
+                  onKeyDown={(e) => handleListItemKeyDown(e, index)}
+                  ref={(e) => {
+                    if (index === selectedItemIndex && e) {
+                      e.focus();
+                    }
+                  }}
+                >
+                  {product.name}
+                </li>
+              ))}
             </ul>
           </form>
-          <button className="form-search__reset" type="reset">
+          <button className="form-search__reset" type="reset" onClick={handleReset}>
             <svg width={10} height={10} aria-hidden="true">
               <use xlinkHref="#icon-close" />
             </svg>
