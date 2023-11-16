@@ -12,6 +12,8 @@ function Header(): React.JSX.Element {
   const listRef = useRef<HTMLUListElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const activeItemRef = useRef<HTMLLIElement | null>(null);
+  const filteredProductsRef = useRef(filteredProducts);
 
   useEffect(() => {
     if (listRef.current && selectedItemIndex !== null) {
@@ -55,12 +57,26 @@ function Header(): React.JSX.Element {
     setIsOpen(false);
   };
 
+  const updateActiveItem = (index: number) => {
+    if (listRef.current && listRef.current.children[index]) {
+      activeItemRef.current = listRef.current.children[index] as HTMLLIElement;
+      return index;
+    }
+    return selectedItemIndex;
+  };
+
   const handleArrowDown = () => {
-    setSelectedItemIndex((prevIndex) => (prevIndex === null || prevIndex === filteredProducts.length - 1 ? 0 : prevIndex + 1));
+    setSelectedItemIndex((prevIndex) => {
+      const newIndex = (prevIndex === null || prevIndex === filteredProducts.length - 1) ? 0 : prevIndex + 1;
+      return updateActiveItem(newIndex);
+    });
   };
 
   const handleArrowUp = () => {
-    setSelectedItemIndex((prevIndex) => (prevIndex === null || prevIndex === 0 ? filteredProducts.length - 1 : prevIndex - 1));
+    setSelectedItemIndex((prevIndex) => {
+      const newIndex = (prevIndex === null || prevIndex === 0) ? filteredProducts.length - 1 : prevIndex - 1;
+      return updateActiveItem(newIndex);
+    });
   };
 
   const handleFormSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -70,6 +86,17 @@ function Header(): React.JSX.Element {
     } else if (e.key === 'ArrowUp' && filteredProducts.length > 0) {
       e.preventDefault();
       handleArrowUp();
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        setSelectedItemIndex((prevIndex) =>
+          prevIndex !== null ? Math.max(prevIndex - 1, 0) : 0
+        );
+      } else {
+        setSelectedItemIndex((prevIndex) =>
+          prevIndex !== null ? Math.min(prevIndex + 1, filteredProducts.length - 1) : 0
+        );
+      }
     }
   };
 
@@ -83,8 +110,29 @@ function Header(): React.JSX.Element {
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       handleArrowUp();
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        setSelectedItemIndex((prevIndex) =>
+          prevIndex !== null ? Math.max(prevIndex - 1, 0) : 0
+        );
+      } else {
+        setSelectedItemIndex((prevIndex) =>
+          prevIndex !== null ? Math.min(prevIndex + 1, filteredProducts.length - 1) : 0
+        );
+      }
     }
   };
+
+  useEffect(() => {
+    filteredProductsRef.current = filteredProducts;
+  }, [filteredProducts]);
+
+  useEffect(() => {
+    const selectedProduct =
+      selectedItemIndex !== null ? filteredProductsRef.current[selectedItemIndex] : null;
+    setValue(selectedProduct ? selectedProduct.name : '');
+  }, [selectedItemIndex]);
 
   const handleReset = () => {
     setIsOpen(false);
@@ -164,6 +212,7 @@ function Header(): React.JSX.Element {
                   onKeyDown={(e) => handleListItemKeyDown(e, index)}
                   ref={(e) => {
                     if (index === selectedItemIndex && e) {
+                      activeItemRef.current = e;
                       e.focus();
                     }
                   }}
