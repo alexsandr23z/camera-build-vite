@@ -1,4 +1,5 @@
 import { MAX_COUNT_STARS } from '../consts';
+import { TProducts } from '../types/product';
 
 export const showActiveRateng = (rating: number) => {
   const activeRating = [];
@@ -16,4 +17,20 @@ export const showDisabledRateng = (rating: number) => {
   }
   return newDisabledRating;
 };
+
+export function sortLowToHighRating(products: TProducts) {
+  return [...products].sort((a, b) => a.rating - b.rating);
+}
+
+export function sortHighToLowRating(products: TProducts) {
+  return [...products].sort((a, b) => b.rating - a.rating);
+}
+
+export function sortLowToHighPrice(products: TProducts) {
+  return [...products].sort((a, b) => a.price - b.price);
+}
+
+export function sortHighToLowPrice(products: TProducts) {
+  return [...products].sort((a, b) => b.price - a.price);
+}
 

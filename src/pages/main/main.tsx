@@ -7,6 +7,9 @@ import ProductsCard from '../../components/products-card/products-card';
 import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';
 import { TProduct } from '../../types/product';
+import Sorting from '../../components/sorting/sorting';
+import { SortOrder, SortType } from '../../consts';
+import { sortHighToLowPrice, sortHighToLowRating, sortLowToHighPrice, sortLowToHighRating } from '../../util/util';
 
 function Main(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.products);
@@ -34,6 +37,20 @@ function Main(): React.JSX.Element {
       setShowingCards(showingProducts);
     }
   }, [maxProductIndex, minProductIndex, products, isMountedRef]);
+
+  const handleSortChange = (sortType: string, sortOrder: string) => {
+    let sortedProducts = [...products];
+
+    if(sortType === SortType.NoneType && sortOrder === SortOrder.NoneOrder) {
+      return [...sortedProducts];
+    } else if(sortType === SortType.SortPrice) {
+      sortedProducts = sortOrder === SortOrder.Up ? sortLowToHighPrice(sortedProducts) : sortHighToLowPrice(sortedProducts);
+    } else if(sortType === SortType.SortPopular) {
+      sortedProducts = sortOrder === SortOrder.Up ? sortLowToHighRating(sortedProducts) : sortHighToLowRating(sortedProducts);
+    }
+
+    setShowingCards(sortedProducts);
+  };
 
   return (
     <div className="wrapper">
@@ -195,57 +212,7 @@ function Main(): React.JSX.Element {
                   </div>
                 </div>
                 <div className="catalog__content">
-                  <div className="catalog-sort">
-                    <form action="#">
-                      <div className="catalog-sort__inner">
-                        <p className="title title--h5">Сортировать:</p>
-                        <div className="catalog-sort__type">
-                          <div className="catalog-sort__btn-text">
-                            <input
-                              type="radio"
-                              id="sortPrice"
-                              name="sort"
-                              defaultChecked
-                            />
-                            <label htmlFor="sortPrice">по цене</label>
-                          </div>
-                          <div className="catalog-sort__btn-text">
-                            <input type="radio" id="sortPopular" name="sort" />
-                            <label htmlFor="sortPopular">по популярности</label>
-                          </div>
-                        </div>
-                        <div className="catalog-sort__order">
-                          <div className="catalog-sort__btn catalog-sort__btn--up">
-                            <input
-                              type="radio"
-                              id="up"
-                              name="sort-icon"
-                              defaultChecked
-                              aria-label="По возрастанию"
-                            />
-                            <label htmlFor="up">
-                              <svg width={16} height={14} aria-hidden="true">
-                                <use xlinkHref="#icon-sort" />
-                              </svg>
-                            </label>
-                          </div>
-                          <div className="catalog-sort__btn catalog-sort__btn--down">
-                            <input
-                              type="radio"
-                              id="down"
-                              name="sort-icon"
-                              aria-label="По убыванию"
-                            />
-                            <label htmlFor="down">
-                              <svg width={16} height={14} aria-hidden="true">
-                                <use xlinkHref="#icon-sort" />
-                              </svg>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
+                  <Sorting handleSortChange={handleSortChange}/>
                   <div className="cards catalog__cards">
                     {showingCards.map((product) => <ProductsCard key={product.id} product={product}/>)}
                   </div>

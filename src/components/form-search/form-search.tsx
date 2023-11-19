@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, START_SEARCH_FORM } from '../../consts';
 import { useAppSelector } from '../hook';
 import { TProduct } from '../../types/product';
+import Styles from './form-search.module.css';
 
 function FormSearch(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.products);
@@ -14,10 +15,12 @@ function FormSearch(): React.JSX.Element {
   const navigate = useNavigate();
   const activeItemRef = useRef<HTMLLIElement | null>(null);
   const filteredProductsRef = useRef(filteredProducts);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const firstItemRef = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {
     if (listRef.current && selectedItemIndex !== null) {
-      const focusedItem = listRef.current.querySelector('.form-search__select-item.focus');
+      const focusedItem = listRef.current.querySelector(`.form-search__select-item.${Styles.focus}`);
       if (focusedItem) {
         const listRect = listRef.current.getBoundingClientRect();
         const itemRect = focusedItem.getBoundingClientRect();
@@ -57,51 +60,52 @@ function FormSearch(): React.JSX.Element {
     setIsOpen(false);
   };
 
-  const updateActiveItem = (index: number) => {
+  const updateActiveItem = useCallback((index: number) => {
     if (listRef.current && listRef.current.children[index]) {
       activeItemRef.current = listRef.current.children[index] as HTMLLIElement;
+      activeItemRef.current.focus();
       return index;
     }
     return selectedItemIndex;
-  };
+  }, [selectedItemIndex]);
 
   const handleArrowDown = () => {
+    setIsOpen(true);
     setSelectedItemIndex((prevIndex) => {
       const newIndex = (prevIndex === null || prevIndex === filteredProducts.length - 1) ? 0 : prevIndex + 1;
-      return updateActiveItem(newIndex);
+      updateActiveItem(newIndex);
+      return newIndex;
     });
   };
 
   const handleArrowUp = () => {
+    setIsOpen(true);
     setSelectedItemIndex((prevIndex) => {
       const newIndex = (prevIndex === null || prevIndex === 0) ? filteredProducts.length - 1 : prevIndex - 1;
-      return updateActiveItem(newIndex);
+      updateActiveItem(newIndex);
+      return newIndex;
     });
   };
 
   const handleFormSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown' && filteredProducts.length > START_SEARCH_FORM) {
+    if (e.key === 'ArrowDown' && filteredProducts.length > 0) {
       e.preventDefault();
       handleArrowDown();
-    } else if (e.key === 'ArrowUp' && filteredProducts.length > START_SEARCH_FORM) {
+    } else if (e.key === 'ArrowUp' && filteredProducts.length > 0) {
       e.preventDefault();
       handleArrowUp();
-    } else if (e.key === 'Tab' && filteredProducts.length > START_SEARCH_FORM) {
+    } else if (e.key === 'Tab' && filteredProducts.length > 0) {
       e.preventDefault();
-      if (e.shiftKey) {
-        setSelectedItemIndex((prevIndex) =>
-          prevIndex !== null ? Math.max(prevIndex - 1, 0) : 0
-        );
-      } else {
-        setSelectedItemIndex((prevIndex) =>
-          prevIndex !== null ? Math.min(prevIndex + 1, filteredProducts.length - 1) : 0
-        );
+      if (isOpen) {
+        handleArrowDown();
       }
+      setIsOpen(true);
     }
   };
 
   const handleListItemKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, index: number) => {
-    if (e.key === 'Enter' && filteredProducts[index]) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
       const selectedProduct = filteredProducts[index];
       handleSearchProductsClick(selectedProduct);
     } else if (e.key === 'ArrowDown') {
@@ -112,14 +116,13 @@ function FormSearch(): React.JSX.Element {
       handleArrowUp();
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      if (e.shiftKey) {
-        setSelectedItemIndex((prevIndex) =>
-          prevIndex !== null ? Math.max(prevIndex - 1, 0) : 0
-        );
-      } else {
-        setSelectedItemIndex((prevIndex) =>
-          prevIndex !== null ? Math.min(prevIndex + 1, filteredProducts.length - 1) : 0
-        );
+      if (isOpen) {
+        handleArrowDown();
+      }
+    } else {
+      setIsOpen(false);
+      if (inputRef.current) {
+        inputRef.current.focus();
       }
     }
   };
@@ -129,8 +132,7 @@ function FormSearch(): React.JSX.Element {
   }, [filteredProducts]);
 
   useEffect(() => {
-    const selectedProduct =
-      selectedItemIndex !== null ? filteredProductsRef.current[selectedItemIndex] : null;
+    const selectedProduct = selectedItemIndex !== null ? filteredProductsRef.current[selectedItemIndex] : null;
     setValue(selectedProduct ? selectedProduct.name : '');
   }, [selectedItemIndex]);
 
@@ -140,6 +142,50 @@ function FormSearch(): React.JSX.Element {
     setValue('');
     setSelectedItemIndex(null);
   };
+
+  useEffect(() => {
+    const handleListKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace' && e.currentTarget === listRef.current) {
+        e.preventDefault();
+        const newValue = value.slice(0, -1);
+        setValue(newValue);
+        if (inputRef.current) {
+          inputRef.current.focus();
+          inputRef.current.setSelectionRange(newValue.length, newValue.length);
+        }
+
+        const resultProducts = products.filter(
+          (product) =>
+            product.name.toLowerCase().includes(newValue.toLowerCase())
+        );
+
+        setFilteredProducts(resultProducts);
+        setIsOpen(true);
+        setSelectedItemIndex(resultProducts.length > 0 ? 0 : null);
+
+        setTimeout(() => {
+          if (listRef.current) {
+            const firstItem = listRef.current.querySelector(`.form-search__select-item.${Styles.focus}`) as HTMLElement;
+            if (firstItem) {
+              firstItem.focus();
+            }
+          }
+        }, 0);
+      }
+    };
+
+    const listRefCurrent = listRef.current;
+
+    if (listRefCurrent) {
+      listRefCurrent.addEventListener('keydown', handleListKeyDown);
+    }
+
+    return () => {
+      if (listRefCurrent) {
+        listRefCurrent.removeEventListener('keydown', handleListKeyDown);
+      }
+    };
+  }, [value, products, updateActiveItem]);
 
   return (
     <div className={value.length >= START_SEARCH_FORM && isOpen ? 'form-search list-opened' : 'form-search'}>
@@ -154,6 +200,7 @@ function FormSearch(): React.JSX.Element {
             <use xlinkHref="#icon-lens" />
           </svg>
           <input
+            ref={inputRef}
             className="form-search__input"
             type="text"
             autoComplete="off"
@@ -172,13 +219,14 @@ function FormSearch(): React.JSX.Element {
             {filteredProducts.map((product, index) => (
               <li
                 key={product.id}
-                className={`form-search__select-item ${index === selectedItemIndex ? 'focus' : ''}`}
+                className={`form-search__select-item ${index === selectedItemIndex ? Styles.focus : ''}`}
                 tabIndex={0}
                 onClick={() => handleSearchProductsClick(product)}
                 onKeyDown={(e) => handleListItemKeyDown(e, index)}
                 ref={(e) => {
                   if (index === selectedItemIndex && e) {
                     activeItemRef.current = e;
+                    firstItemRef.current = e;
                     e.focus();
                   }
                 }}

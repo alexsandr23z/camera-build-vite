@@ -54,3 +54,17 @@ export enum ProductTabsSearch {
   Specifications = '#specifications',
   Description = '#description'
 }
+
+export enum SortType {
+  NoneType = 'noneType',
+  SortPrice = 'sortPrice',
+  SortPopular = 'sortPopular',
+}
+
+export enum SortOrder {
+  NoneOrder = 'noneOrder',
+  Down = 'down',
+  Up = 'up',
+}
+
+
