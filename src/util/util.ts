@@ -1,5 +1,5 @@
-import { MAX_COUNT_STARS } from '../consts';
-import { TProducts } from '../types/product';
+import { MAX_COUNT_STARS, SortOrder, SortType } from '../consts';
+import { TProduct } from '../types/product';
 
 export const showActiveRateng = (rating: number) => {
   const activeRating = [];
@@ -18,19 +18,11 @@ export const showDisabledRateng = (rating: number) => {
   return newDisabledRating;
 };
 
-export function sortLowToHighRating(products: TProducts) {
-  return [...products].sort((a, b) => a.rating - b.rating);
+export function compareFunction(a: TProduct, b: TProduct, sortType: SortType, sortOrder: SortOrder) {
+  if (sortType === SortType.SortPrice) {
+    return sortOrder === SortOrder.Up ? a.price - b.price : b.price - a.price;
+  } else if (sortType === SortType.SortPopular) {
+    return sortOrder === SortOrder.Up ? a.rating - b.rating : b.rating - a.rating;
+  }
+  return 0;
 }
-
-export function sortHighToLowRating(products: TProducts) {
-  return [...products].sort((a, b) => b.rating - a.rating);
-}
-
-export function sortLowToHighPrice(products: TProducts) {
-  return [...products].sort((a, b) => a.price - b.price);
-}
-
-export function sortHighToLowPrice(products: TProducts) {
-  return [...products].sort((a, b) => b.price - a.price);
-}
-

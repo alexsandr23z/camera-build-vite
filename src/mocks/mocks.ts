@@ -36,7 +36,7 @@ export const productsMock = [
   },
   {
     id: 2,
-    name: 'Retrocamera',
+    name: 'Retrocamera 2',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -52,7 +52,7 @@ export const productsMock = [
   },
   {
     id: 3,
-    name: 'Retrocamera',
+    name: 'Retrocamera 3',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -68,7 +68,7 @@ export const productsMock = [
   },
   {
     id: 4,
-    name: 'Retrocamera',
+    name: 'Retrocamera 4',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -84,7 +84,7 @@ export const productsMock = [
   },
   {
     id: 5,
-    name: 'Retrocamera',
+    name: 'Retrocamera 5',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -100,7 +100,7 @@ export const productsMock = [
   },
   {
     id: 6,
-    name: 'Retrocamera',
+    name: 'Retrocamera 6',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -116,7 +116,7 @@ export const productsMock = [
   },
   {
     id: 7,
-    name: 'Retrocamera',
+    name: 'Retrocamera 7',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -132,7 +132,7 @@ export const productsMock = [
   },
   {
     id: 8,
-    name: 'Retrocamera',
+    name: 'Retrocamera 8',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -148,7 +148,7 @@ export const productsMock = [
   },
   {
     id: 9,
-    name: 'Retrocamera',
+    name: 'Retrocamera 9',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -164,7 +164,7 @@ export const productsMock = [
   },
   {
     id: 10,
-    name: 'Retrocamera',
+    name: 'Retrocamera 10',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -180,7 +180,7 @@ export const productsMock = [
   },
   {
     id: 11,
-    name: 'Retrocamera',
+    name: 'Retrocamera 11',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -196,7 +196,7 @@ export const productsMock = [
   },
   {
     id: 12,
-    name: 'Retrocamera',
+    name: 'Retrocamera 12',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -212,7 +212,7 @@ export const productsMock = [
   },
   {
     id: 13,
-    name: 'Retrocamera',
+    name: 'Retrocamera 13',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -228,7 +228,7 @@ export const productsMock = [
   },
   {
     id: 14,
-    name: 'Retrocamera',
+    name: 'Retrocamera 14',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,
@@ -244,7 +244,7 @@ export const productsMock = [
   },
   {
     id: 15,
-    name: 'Retrocamera',
+    name: 'Retrocamera 15',
     vendorCode: 'DA4IU67AD5',
     type: ProductType.Collectible,
     category: ProductCategory.VideoCamera,

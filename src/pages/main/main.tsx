@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
@@ -9,7 +9,7 @@ import Pagination from '../../components/pagination/pagination';
 import { TProduct } from '../../types/product';
 import Sorting from '../../components/sorting/sorting';
 import { SortOrder, SortType } from '../../consts';
-import { sortHighToLowPrice, sortHighToLowRating, sortLowToHighPrice, sortLowToHighRating } from '../../util/util';
+import { compareFunction} from '../../util/util';
 
 function Main(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.products);
@@ -17,6 +17,8 @@ function Main(): React.JSX.Element {
   const maxProductIndex = useAppSelector((state) => state.pagination.maxProductIndex);
   const limit = useAppSelector((state) => state.pagination.limit);
   const [showingCards, setShowingCards] = useState<TProduct[]>([]);
+  const [sortType, setSortType] = useState<SortType>(SortType.NoneType);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.NoneOrder);
 
   const productsLength = products.length;
   const paginationCount: number = Math.ceil(productsLength / limit);
@@ -31,26 +33,26 @@ function Main(): React.JSX.Element {
     };
   }, []);
 
+  const handleSortChange = useCallback((type: SortType, order: SortOrder) => {
+    sessionStorage.setItem('sortType', type);
+    sessionStorage.setItem('sortOrder', order);
+    setSortType(type);
+    setSortOrder(order);
+    if (type === SortType.NoneType && order === SortOrder.NoneOrder) {
+      setShowingCards([...products]);
+    } else {
+      const sortedProducts = [...products].sort((a, b) => compareFunction(a, b, type, order));
+      setShowingCards(sortedProducts);
+    }
+  }, [products, setShowingCards, setSortType, setSortOrder]);
+
   useEffect(() => {
     if(minProductIndex !== null && maxProductIndex && isMountedRef) {
-      const showingProducts = products.slice(minProductIndex, maxProductIndex);
+      const sortedProducts = [...products].sort((a, b) => compareFunction(a, b, sortType, sortOrder));
+      const showingProducts = sortedProducts.slice(minProductIndex, maxProductIndex);
       setShowingCards(showingProducts);
     }
-  }, [maxProductIndex, minProductIndex, products, isMountedRef]);
-
-  const handleSortChange = (sortType: string, sortOrder: string) => {
-    let sortedProducts = [...products];
-
-    if(sortType === SortType.NoneType && sortOrder === SortOrder.NoneOrder) {
-      return [...sortedProducts];
-    } else if(sortType === SortType.SortPrice) {
-      sortedProducts = sortOrder === SortOrder.Up ? sortLowToHighPrice(sortedProducts) : sortHighToLowPrice(sortedProducts);
-    } else if(sortType === SortType.SortPopular) {
-      sortedProducts = sortOrder === SortOrder.Up ? sortLowToHighRating(sortedProducts) : sortHighToLowRating(sortedProducts);
-    }
-
-    setShowingCards(sortedProducts);
-  };
+  }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder]);
 
   return (
     <div className="wrapper">
@@ -212,7 +214,7 @@ function Main(): React.JSX.Element {
                   </div>
                 </div>
                 <div className="catalog__content">
-                  <Sorting handleSortChange={handleSortChange}/>
+                  <Sorting handleSortChange={handleSortChange} sortType={sortType} setSortType={setSortType} sortOrder={sortOrder} setSortOrder={setSortOrder}/>
                   <div className="cards catalog__cards">
                     {showingCards.map((product) => <ProductsCard key={product.id} product={product}/>)}
                   </div>

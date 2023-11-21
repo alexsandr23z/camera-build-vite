@@ -1,23 +1,41 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import { SortOrder, SortType } from '../../consts';
 
 type TSorting = {
-  handleSortChange: (sortType: string, sortOrder: string) => void;
+  handleSortChange: (type: SortType, order: SortOrder) => void;
+  sortType: SortType;
+  setSortType: (type: SortType) => void;
+  sortOrder: SortOrder;
+  setSortOrder: (order: SortOrder) => void;
 }
 
-function Sorting({handleSortChange}: TSorting): React.JSX.Element {
-  const [sortType, setSortType] = useState<string>(SortType.NoneType);
-  const [sortOrder, setSortOrder] = useState<string>(SortOrder.Up);
+function Sorting({handleSortChange, sortType, setSortType, sortOrder, setSortOrder}: TSorting): React.JSX.Element {
 
-  const handleSortTypeChange = (type: string) => {
+  const handleSortTypeChange = (type: SortType) => {
     setSortType(type);
     handleSortChange(type, sortOrder);
   };
 
-  const handleSortOrderChange = (order: string) => {
+  const handleSortOrderChange = (order: SortOrder) => {
     setSortOrder(order);
-    handleSortChange(sortType, order);
+
+    if (sortType === SortType.NoneType) {
+      setSortType(SortType.SortPrice);
+      handleSortChange(SortType.SortPrice, order);
+    } else {
+      handleSortChange(sortType, order);
+    }
   };
+
+  useEffect(() => {
+    const savedSortType = sessionStorage.getItem('sortType');
+    const savedSortOrder = sessionStorage.getItem('sortOrder');
+
+    if (savedSortType && savedSortOrder) {
+      setSortType(savedSortType as SortType);
+      setSortOrder(savedSortOrder as SortOrder);
+    }
+  }, [setSortOrder, setSortType]);
 
   return (
     <div className="catalog-sort">
