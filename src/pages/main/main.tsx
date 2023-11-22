@@ -34,8 +34,8 @@ function Main(): React.JSX.Element {
   }, []);
 
   const handleSortChange = useCallback((type: SortType, order: SortOrder) => {
-    sessionStorage.setItem('sortType', type);
-    sessionStorage.setItem('sortOrder', order);
+    localStorage.setItem('sortType', type);
+    localStorage.setItem('sortOrder', order);
     setSortType(type);
     setSortOrder(order);
     if (type === SortType.NoneType && order === SortOrder.NoneOrder) {
@@ -47,10 +47,15 @@ function Main(): React.JSX.Element {
   }, [products, setShowingCards, setSortType, setSortOrder]);
 
   useEffect(() => {
-    if(minProductIndex !== null && maxProductIndex && isMountedRef) {
+    if (minProductIndex !== null && maxProductIndex && isMountedRef) {
       const sortedProducts = [...products].sort((a, b) => compareFunction(a, b, sortType, sortOrder));
       const showingProducts = sortedProducts.slice(minProductIndex, maxProductIndex);
       setShowingCards(showingProducts);
+
+      const currentSearchParams = new URLSearchParams(window.location.search);
+      currentSearchParams.set('sortType', sortType);
+      currentSearchParams.set('sortOrder', sortOrder);
+      window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
     }
   }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder]);
 

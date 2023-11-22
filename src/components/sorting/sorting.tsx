@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SortOrder, SortType } from '../../consts';
 
 type TSorting = {
@@ -7,13 +8,72 @@ type TSorting = {
   setSortType: (type: SortType) => void;
   sortOrder: SortOrder;
   setSortOrder: (order: SortOrder) => void;
-}
+};
 
-function Sorting({handleSortChange, sortType, setSortType, sortOrder, setSortOrder}: TSorting): React.JSX.Element {
+function Sorting({ handleSortChange, sortType, setSortType, sortOrder, setSortOrder }: TSorting): React.JSX.Element {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const updateSearchParams = (type: SortType, order: SortOrder) => {
+    const currentSearchParams = new URLSearchParams(searchParams);
+
+    currentSearchParams.set('sortType', type);
+    currentSearchParams.set('sortOrder', order);
+
+    window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
+  };
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlSortType = urlSearchParams.get('sortType');
+    const urlSortOrder = urlSearchParams.get('sortOrder');
+
+    if (urlSortType && urlSortOrder) {
+      setSortType(urlSortType as SortType);
+      setSortOrder(urlSortOrder as SortOrder);
+      sessionStorage.setItem('sortType', urlSortType);
+      sessionStorage.setItem('sortOrder', urlSortOrder);
+    } else {
+      const sessionSortType = sessionStorage.getItem('sortType');
+      const sessionSortOrder = sessionStorage.getItem('sortOrder');
+
+      if (sessionSortType !== null && sessionSortOrder !== null) {
+        setSortType(sessionSortType as SortType);
+        setSortOrder(sessionSortOrder as SortOrder);
+      } else {
+        setSortType(SortType.NoneType);
+        setSortOrder(SortOrder.NoneOrder);
+      }
+    }
+  }, [setSortType, setSortOrder]);
+
+  useEffect(() => {
+    sessionStorage.setItem('sortType', sortType);
+    sessionStorage.setItem('sortOrder', sortOrder);
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    if (urlSearchParams.get('sortType') !== null || urlSearchParams.get('sortOrder') !== null) {
+      localStorage.setItem('sortType', sortType);
+      localStorage.setItem('sortOrder', sortOrder);
+    }
+  }, [sortType, sortOrder]);
+
+  const memoSearchParams = useMemo(() => searchParams, [searchParams]);
+
+  useEffect(() => {
+    setSearchParams(memoSearchParams);
+  }, [memoSearchParams, setSearchParams]);
 
   const handleSortTypeChange = (type: SortType) => {
     setSortType(type);
-    handleSortChange(type, sortOrder);
+
+    if (sortOrder === SortOrder.NoneOrder) {
+      setSortOrder(SortOrder.Up);
+      handleSortChange(type, SortOrder.Up);
+    } else {
+      handleSortChange(type, sortOrder);
+    }
+
+    updateSearchParams(type, sortOrder);
   };
 
   const handleSortOrderChange = (order: SortOrder) => {
@@ -25,17 +85,9 @@ function Sorting({handleSortChange, sortType, setSortType, sortOrder, setSortOrd
     } else {
       handleSortChange(sortType, order);
     }
+
+    updateSearchParams(sortType, order);
   };
-
-  useEffect(() => {
-    const savedSortType = sessionStorage.getItem('sortType');
-    const savedSortOrder = sessionStorage.getItem('sortOrder');
-
-    if (savedSortType && savedSortOrder) {
-      setSortType(savedSortType as SortType);
-      setSortOrder(savedSortOrder as SortOrder);
-    }
-  }, [setSortOrder, setSortType]);
 
   return (
     <div className="catalog-sort">

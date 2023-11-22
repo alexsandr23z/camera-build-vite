@@ -57,6 +57,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
   }, [dispatch, page, currentPage, paginationPages, end, isMountedRef]);
 
   const handlePaginationClick = (pageNumber: number) => {
+    setSearchParams({ page: `${pageNumber}` });
     dispatch(setCurrentPage(pageNumber));
   };
 
@@ -64,6 +65,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
     if(pageNumber >= paginationPages[2]) {
       dispatch(incrementPagination());
     }
+    setSearchParams({ page: `${pageNumber + 1}` });
     dispatch(setCurrentPage(pageNumber + 1));
   };
 
@@ -71,6 +73,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
     if(pageNumber <= paginationPages[0]) {
       dispatch(decrementPagination());
     }
+    setSearchParams({ page: `${pageNumber - 1}` });
     dispatch(setCurrentPage(pageNumber - 1));
   };
 
