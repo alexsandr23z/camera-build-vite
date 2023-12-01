@@ -10,6 +10,7 @@ import { TProduct } from '../../types/product';
 import Sorting from '../../components/sorting/sorting';
 import { SortOrder, SortType } from '../../consts';
 import { compareFunction} from '../../util/util';
+import Filters from '../../components/filters/filters';
 
 function Main(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.products);
@@ -19,8 +20,13 @@ function Main(): React.JSX.Element {
   const [showingCards, setShowingCards] = useState<TProduct[]>([]);
   const [sortType, setSortType] = useState<SortType>(SortType.NoneType);
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.NoneOrder);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [productsLength, setProductsLength] = useState<number>(products.length);
 
-  const productsLength = products.length;
   const paginationCount: number = Math.ceil(productsLength / limit);
 
   const isMountedRef = useRef(false);
@@ -46,9 +52,55 @@ function Main(): React.JSX.Element {
     }
   }, [products, setShowingCards, setSortType, setSortOrder]);
 
+  const handleCategoryChange = useCallback((category: string | null) => {
+    setSelectedTypes([]);
+    setSelectedLevels([]);
+
+    setSelectedCategory(category);
+    setMinPrice(null);
+    setMaxPrice(null);
+  }, [setSelectedTypes, setSelectedLevels, setSelectedCategory, setMinPrice, setMaxPrice]);
+
+  const handleTypeChange = useCallback((types: string[]) => {
+    setSelectedTypes(types);
+    setMinPrice(null);
+    setMaxPrice(null);
+  }, [setSelectedTypes]);
+
+  const handleLevelChange = useCallback((levels: string[]) => {
+    setSelectedLevels(levels);
+    setMinPrice(null);
+    setMaxPrice(null);
+  }, [setSelectedLevels]);
+
+  const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
+    setMinPrice(newMinPrice);
+  };
+
+  const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMaxPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
+    setMaxPrice(newMaxPrice);
+  };
+
   useEffect(() => {
     if (minProductIndex !== null && maxProductIndex && isMountedRef) {
-      const sortedProducts = [...products].sort((a, b) => compareFunction(a, b, sortType, sortOrder));
+      const filteredProducts = products
+        .filter((product) => !selectedCategory || product.category === selectedCategory)
+        .filter((product) => selectedTypes.length === 0 || selectedTypes.includes(product.type))
+        .filter((product) => selectedLevels.length === 0 || selectedLevels.includes(product.level));
+
+      const filteredByPrice = filteredProducts
+        .filter((product) => (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice));
+
+      const newPrise = filteredByPrice.map((item) => item.price);
+      if(newPrise.length > 0) {
+        setMinPrice(Math.min(...newPrise));
+        setMaxPrice(Math.max(...newPrise));
+      }
+
+      const sortedProducts = [...filteredByPrice].sort((a, b) => compareFunction(a, b, sortType, sortOrder));
+      setProductsLength(sortedProducts.length);
       const showingProducts = sortedProducts.slice(minProductIndex, maxProductIndex);
       setShowingCards(showingProducts);
 
@@ -57,7 +109,7 @@ function Main(): React.JSX.Element {
       currentSearchParams.set('sortOrder', sortOrder);
       window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
     }
-  }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder]);
+  }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder, selectedCategory, selectedTypes, selectedLevels, minPrice, maxPrice]);
 
   return (
     <div className="wrapper">
@@ -92,136 +144,21 @@ function Main(): React.JSX.Element {
               <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
               <div className="page-content__columns">
                 <div className="catalog__aside">
-                  <div className="catalog-filter">
-                    <form action="#">
-                      <h2 className="visually-hidden">Фильтр</h2>
-                      <fieldset className="catalog-filter__block">
-                        <legend className="title title--h5">Цена, ₽</legend>
-                        <div className="catalog-filter__price-range">
-                          <div className="custom-input">
-                            <label>
-                              <input type="number" name="price" placeholder="от" />
-                            </label>
-                          </div>
-                          <div className="custom-input">
-                            <label>
-                              <input
-                                type="number"
-                                name="priceUp"
-                                placeholder="до"
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      </fieldset>
-                      <fieldset className="catalog-filter__block">
-                        <legend className="title title--h5">Категория</legend>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input
-                              type="checkbox"
-                              name="photocamera"
-                            />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Фотокамера
-                            </span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="videocamera" />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Видеокамера
-                            </span>
-                          </label>
-                        </div>
-                      </fieldset>
-                      <fieldset className="catalog-filter__block">
-                        <legend className="title title--h5">Тип камеры</legend>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input
-                              type="checkbox"
-                              name="digital"
-                            />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">Цифровая</span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="film"/>
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Плёночная
-                            </span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="snapshot" />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Моментальная
-                            </span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input
-                              type="checkbox"
-                              name="collection"
-                            />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Коллекционная
-                            </span>
-                          </label>
-                        </div>
-                      </fieldset>
-                      <fieldset className="catalog-filter__block">
-                        <legend className="title title--h5">Уровень</legend>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="zero"/>
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">Нулевой</span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="non-professional" />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Любительский
-                            </span>
-                          </label>
-                        </div>
-                        <div className="custom-checkbox catalog-filter__item">
-                          <label>
-                            <input type="checkbox" name="professional" />
-                            <span className="custom-checkbox__icon" />
-                            <span className="custom-checkbox__label">
-                              Профессиональный
-                            </span>
-                          </label>
-                        </div>
-                      </fieldset>
-                      <button
-                        className="btn catalog-filter__reset-btn"
-                        type="reset"
-                      >
-                        Сбросить фильтры
-                      </button>
-                    </form>
-                  </div>
+                  <Filters
+                    onCategoryChange={handleCategoryChange}
+                    onTypeChange={handleTypeChange}
+                    onLevelChange={handleLevelChange}
+                    onMinPriceChange={handleMinPriceChange}
+                    onMaxPriceChange={handleMaxPriceChange}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    products={products}
+                  />
                 </div>
                 <div className="catalog__content">
                   <Sorting handleSortChange={handleSortChange} sortType={sortType} setSortType={setSortType} sortOrder={sortOrder} setSortOrder={setSortOrder}/>
                   <div className="cards catalog__cards">
-                    {showingCards.map((product) => <ProductsCard key={product.id} product={product}/>)}
+                    {productsLength !== 0 ? showingCards.map((product) => <ProductsCard key={product.id} product={product}/>) : 'по вашему запросу ничего не найдено'}
                   </div>
                   <Pagination paginationCount={paginationCount} productsLength={productsLength}/>
                 </div>

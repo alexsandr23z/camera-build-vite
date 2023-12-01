@@ -113,7 +113,7 @@ function Pagination({paginationCount, productsLength}: TPaginationProps): React.
             </Link>
           </li>)
         ).reverse()}
-        { currentPage <= start &&
+        { currentPage <= start && currentPage !== end &&
           <li className="pagination__item" onClick={() => handleIncrementPagination(Number(page))}>
             <Link
               className="pagination__link pagination__link--text"

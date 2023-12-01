@@ -12,24 +12,6 @@ export enum AppRoute {
   Basket = '/basket',
 }
 
-export enum ProductType {
-  Collectible = 'Коллекционная',
-  Instant = 'Моментальная',
-  Digital = 'Цифровая',
-  Film = 'Плёночная'
-}
-
-export enum ProductCategory {
-  VideoCamera = 'Видеокамера',
-  Camera = 'Фотоаппарат'
-}
-
-export enum ProductLevel {
-  Zero = ' Нулевой',
-  Amateur = 'Любительский',
-  Professional = 'Профессиональный'
-}
-
 export enum ApiRoute {
   Products = '/cameras',
   PromoProducts = '/promo',
@@ -67,4 +49,44 @@ export enum SortOrder {
   Up = 'up',
 }
 
+export enum ProductType {
+  Collectible = 'Коллекционная',
+  Instant = 'Моментальная',
+  Digital = 'Цифровая',
+  Film = 'Плёночная'
+}
+
+export enum ProductCategory {
+  PhotoCamera = 'Фотоаппарат',
+  VideoCamera = 'Видеокамера',
+}
+
+export enum ProductLevel {
+  Zero = 'Нулевой',
+  Amateur = 'Любительский',
+  Professional = 'Профессиональный'
+}
+
+export const FilterCategory = {
+  PhotoCamera: 'Фотоаппарат',
+  VideoCamera: 'Видеокамера',
+} as const;
+
+export const FilterType = {
+  Digital: 'Цифровая',
+  Film: 'Плёночная',
+  Snapshot: 'Моментальная',
+  Collection: 'Коллекционная',
+} as const;
+
+export const FilterLevel = {
+  Zero: 'Нулевой',
+  NonProfessional: 'Любительский',
+  Professional: 'Профессиональный',
+} as const;
+
+export const FilterPrise = {
+  price: 'от',
+  priceUp: 'до',
+} as const;
 
