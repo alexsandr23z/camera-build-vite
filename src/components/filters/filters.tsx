@@ -191,7 +191,6 @@ function Filters({
     setSelectedLevels([]);
     onTypeChange([]);
     onLevelChange([]);
-    // updateSearchParamsCategory(category);
   };
 
   const handleTypeChange = (types: string) => {
@@ -201,7 +200,6 @@ function Filters({
 
     setSelectedTypes(newTypes);
     onTypeChange(newTypes);
-    // updateSearchParamsTypes(types);
   };
 
   const handleLevelChange = (level: ProductLevel) => {
@@ -211,7 +209,6 @@ function Filters({
 
     setSelectedLevels(newLevels);
     onLevelChange(newLevels);
-    // updateSearchParamsLevels(level);
   };
 
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,7 +232,11 @@ function Filters({
   };
 
   const handleResetFilters = () => {
-    setIsUserChanged(true);
+    setIsUserChanged(false);
+    setMinPrice(null);
+    setMaxPrice(null);
+    setInputMinPrice('');
+    setInputMaxPrice('');
     setSelectedCategory(null);
     setSelectedTypes([]);
     setSelectedLevels([]);

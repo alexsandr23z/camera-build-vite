@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
-import { useAppSelector } from '../../components/hook';
+import { useAppDispatch, useAppSelector } from '../../components/hook';
 import ProductsCard from '../../components/products-card/products-card';
 import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';
@@ -11,8 +11,12 @@ import Sorting from '../../components/sorting/sorting';
 import { SortOrder, SortType } from '../../consts';
 import { compareFunction} from '../../util/util';
 import Filters from '../../components/filters/filters';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { fetchProducts } from '../../store/api-action/products-api/products-api';
 
 function Main(): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.products.products);
   const minProductIndex = useAppSelector((state) => state.pagination.minProductIndex);
   const maxProductIndex = useAppSelector((state) => state.pagination.maxProductIndex);
@@ -28,6 +32,24 @@ function Main(): React.JSX.Element {
   const [inputMinPrice, setInputMinPrice] = useState<string>(minPrice !== null ? minPrice.toString() : '');
   const [inputMaxPrice, setInputMaxPrice] = useState<string>(maxPrice !== null ? maxPrice.toString() : '');
   const [productsLength, setProductsLength] = useState<number>(products.length);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        await dispatch(fetchProducts());
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setFetchError(error instanceof Error ? error.message : 'Произошла ошибка при загрузке данных');
+        toast.error('Произошла ошибка при загрузке данных');
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   const paginationCount: number = Math.ceil(productsLength / limit);
 
@@ -129,6 +151,18 @@ function Main(): React.JSX.Element {
     }
 
   }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder, selectedCategory, selectedTypes, selectedLevels, minPrice, maxPrice, inputMinPrice, inputMaxPrice]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (fetchError) {
+    return (
+      <div>
+        <p>Произошла ошибка: {fetchError}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="wrapper">

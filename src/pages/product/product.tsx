@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
@@ -13,18 +13,33 @@ import ProductSimilar from '../../components/product-similar/product-similar';
 import { fetchProductsSimilar } from '../../store/api-action/product-similar-api/product-similar-api';
 import { dropProductsSimilar } from '../../store/slices/product-similar-slices/product-similar-slices';
 import ReviewBlock from '../../components/review/review';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Product(): React.JSX.Element {
   const {id} = useParams();
   const dispatch = useAppDispatch();
   const product = useAppSelector((state) => state.product.product);
   const productsSimilar = useAppSelector((state) => state.productsSimilar.productsSimilar);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchProduct({ id }));
-      dispatch(fetchProductsSimilar({ id }));
-    }
+    const fetchData = async () => {
+      try {
+        if (id) {
+          await dispatch(fetchProduct({ id }));
+          await dispatch(fetchProductsSimilar({ id }));
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setFetchError(error instanceof Error ? error.message : 'Произошла ошибка при загрузке данных');
+        toast.error('Произошла ошибка при загрузке данных');
+      }
+    };
+
+    fetchData();
 
     return () => {
       dispatch(dropProduct());
@@ -38,6 +53,18 @@ function Product(): React.JSX.Element {
       behavior: 'smooth'
     });
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (fetchError) {
+    return (
+      <div>
+        <p>Произошла ошибка: {fetchError}</p>
+      </div>
+    );
+  }
 
   if(!product) {
     return (

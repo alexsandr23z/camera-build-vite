@@ -67,26 +67,4 @@ export enum ProductLevel {
   Professional = 'Профессиональный'
 }
 
-export const FilterCategory = {
-  PhotoCamera: 'Фотоаппарат',
-  VideoCamera: 'Видеокамера',
-} as const;
-
-export const FilterType = {
-  Digital: 'Цифровая',
-  Film: 'Плёночная',
-  Snapshot: 'Моментальная',
-  Collection: 'Коллекционная',
-} as const;
-
-export const FilterLevel = {
-  Zero: 'Нулевой',
-  NonProfessional: 'Любительский',
-  Professional: 'Профессиональный',
-} as const;
-
-export const FilterPrise = {
-  price: 'от',
-  priceUp: 'до',
-} as const;
 
