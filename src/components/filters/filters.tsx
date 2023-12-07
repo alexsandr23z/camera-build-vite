@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { ProductCategory, ProductLevel, ProductType } from '../../consts';
 import { TProducts } from '../../types/product';
+// import { useSearchParams } from 'react-router-dom';
 
 type TFilters = {
   onCategoryChange: (category: string | null) => void;
-  onTypeChange: (types: ProductType[]) => void;
-  onLevelChange: (levels: ProductLevel[]) => void;
+  onTypeChange: (types: string[]) => void;
+  onLevelChange: (levels: string[]) => void;
   onMinPriceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onMaxPriceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   minPrice: number | null;
   maxPrice: number | null;
+  setMinPrice: (min: number | null) => void;
+  setMaxPrice: (max: number | null) => void;
   products: TProducts;
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
+  selectedTypes: string[];
+  setSelectedTypes: (types: string[]) => void;
+  selectedLevels: string[];
+  setSelectedLevels: (levels: string[]) => void;
+  inputMinPrice: string;
+  setInputMinPrice: (minPrice: string) => void;
+  inputMaxPrice: string;
+  setInputMaxPrice: (maxPrice: string) => void;
+
 };
 
 function Filters({
@@ -21,14 +35,141 @@ function Filters({
   onMaxPriceChange,
   maxPrice,
   minPrice,
+  setMinPrice,
+  setMaxPrice,
   products,
+  selectedCategory,
+  setSelectedCategory,
+  selectedTypes,
+  setSelectedTypes,
+  selectedLevels,
+  setSelectedLevels,
+  inputMinPrice,
+  setInputMinPrice,
+  inputMaxPrice,
+  setInputMaxPrice
 }: TFilters): React.JSX.Element {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedTypes, setSelectedTypes] = useState<ProductType[]>([]);
-  const [selectedLevels, setSelectedLevels] = useState<ProductLevel[]>([]);
-  const [inputMinPrice, setInputMinPrice] = useState<string>(minPrice !== null ? minPrice.toString() : '');
-  const [inputMaxPrice, setInputMaxPrice] = useState<string>(maxPrice !== null ? maxPrice.toString() : '');
   const [isUserChanged, setIsUserChanged] = useState<boolean>(false);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlCategory = urlSearchParams.get('category');
+
+    if (urlCategory !== null && urlCategory !== 'null') {
+      setSelectedCategory(urlCategory);
+      sessionStorage.setItem('category', urlCategory);
+    } else if (urlCategory === 'null') {
+      setSelectedCategory(null);
+      sessionStorage.setItem('category', 'null');
+    } else {
+      const sessionCategory = sessionStorage.getItem('category');
+      if (sessionCategory !== null && sessionCategory !== 'null') {
+        setSelectedCategory(sessionCategory);
+      } else {
+        setSelectedCategory(null);
+        sessionStorage.setItem('category', 'null');
+      }
+    }
+  }, [setSelectedCategory]);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlTypes = urlSearchParams.getAll('types');
+
+    if (urlTypes.length > 0 && urlTypes[0] !== '') {
+      const firstType = Array.isArray(urlTypes) ? urlTypes[0] : urlTypes;
+      const typesArray = firstType.split(',');
+
+      setSelectedTypes(typesArray);
+      sessionStorage.setItem('types', JSON.stringify(typesArray));
+    } else if (urlTypes[0] === '') {
+      setSelectedTypes([]);
+      sessionStorage.setItem('types', '');
+    } else {
+      const sessionTypes = sessionStorage.getItem('types');
+      if (sessionTypes !== null && sessionTypes !== '') {
+        setSelectedTypes(JSON.parse(sessionTypes) as string[]);
+      } else {
+        setSelectedTypes([]);
+        sessionStorage.setItem('types', '');
+      }
+    }
+  }, [setSelectedTypes]);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlLevels = urlSearchParams.getAll('levels');
+
+    if (urlLevels.length > 0 && urlLevels[0] !== '') {
+      const firstLevels = Array.isArray(urlLevels) ? urlLevels[0] : urlLevels;
+      const levelsArray = firstLevels.split(',');
+
+      setSelectedLevels(levelsArray);
+      sessionStorage.setItem('levels', JSON.stringify(levelsArray));
+    } else if (urlLevels[0] === '') {
+      setSelectedLevels([]);
+      sessionStorage.setItem('levels', '');
+    } else {
+      const sessionLevels = sessionStorage.getItem('levels');
+      if (sessionLevels !== null && sessionLevels !== '') {
+        setSelectedLevels(JSON.parse(sessionLevels) as string[]);
+      } else {
+        setSelectedLevels([]);
+        sessionStorage.setItem('levels', '');
+      }
+    }
+  }, [setSelectedLevels]);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlMinPrice = urlSearchParams.get('min');
+
+    if (urlMinPrice !== null && urlMinPrice !== 'null' && urlMinPrice !== '') {
+      setMinPrice(Number(urlMinPrice));
+      setInputMinPrice(urlMinPrice);
+      sessionStorage.setItem('min', urlMinPrice);
+    } else if (urlMinPrice === '') {
+      setMinPrice(null);
+      setInputMinPrice('');
+      sessionStorage.setItem('min', 'null');
+    } else {
+      const sessionMinPrice = sessionStorage.getItem('min');
+      if (sessionMinPrice !== null && sessionMinPrice !== 'null') {
+        setMinPrice(Number(sessionMinPrice));
+        setInputMinPrice(sessionMinPrice);
+      } else {
+        setMinPrice(null);
+        setInputMinPrice('');
+        sessionStorage.setItem('min', 'null');
+      }
+    }
+  }, [setInputMinPrice, setMinPrice]);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const urlMaxPrice = urlSearchParams.get('max');
+
+    if (urlMaxPrice !== null && urlMaxPrice !== 'null' && urlMaxPrice !== '') {
+      setMaxPrice(Number(urlMaxPrice));
+      setInputMaxPrice(urlMaxPrice);
+      sessionStorage.setItem('max', urlMaxPrice);
+    } else if (urlMaxPrice === '') {
+      setMaxPrice(null);
+      setInputMaxPrice('');
+      sessionStorage.setItem('max', 'null');
+    } else {
+      const sessionMaxPrice = sessionStorage.getItem('max');
+
+      if (sessionMaxPrice !== null && sessionMaxPrice !== 'null') {
+        setMaxPrice(Number(sessionMaxPrice));
+        setInputMaxPrice(sessionMaxPrice);
+      } else {
+        setMaxPrice(null);
+        setInputMaxPrice('');
+        sessionStorage.setItem('max', 'null');
+      }
+    }
+  }, [setInputMaxPrice, setMaxPrice]);
 
   const photoCamera = products.filter((camera) => camera.category === ProductCategory.PhotoCamera);
   const videoCamera = products.filter((camera) => camera.category === ProductCategory.VideoCamera);
@@ -50,15 +191,17 @@ function Filters({
     setSelectedLevels([]);
     onTypeChange([]);
     onLevelChange([]);
+    // updateSearchParamsCategory(category);
   };
 
-  const handleTypeChange = (type: ProductType) => {
-    const newTypes = selectedTypes.includes(type)
-      ? selectedTypes.filter((selectedType) => selectedType !== type)
-      : [...selectedTypes, type];
+  const handleTypeChange = (types: string) => {
+    const newTypes = selectedTypes.includes(types)
+      ? selectedTypes.filter((selectedType) => selectedType !== types)
+      : [...selectedTypes, types];
 
     setSelectedTypes(newTypes);
     onTypeChange(newTypes);
+    // updateSearchParamsTypes(types);
   };
 
   const handleLevelChange = (level: ProductLevel) => {
@@ -68,6 +211,7 @@ function Filters({
 
     setSelectedLevels(newLevels);
     onLevelChange(newLevels);
+    // updateSearchParamsLevels(level);
   };
 
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,7 +329,7 @@ function Filters({
       }
     }
 
-  }, [inputMinPrice, inputMaxPrice, onMinPriceChange, onMaxPriceChange, minPrice, maxPrice, selectedCategory, minPriceDefaultPhotoCamera, maxPriceDefaultPhotoCamera, minPriceDefaultVideoCamera, maxPriceDefaultVideoCamera]);
+  }, [inputMinPrice, inputMaxPrice, onMinPriceChange, onMaxPriceChange, minPrice, maxPrice, selectedCategory, minPriceDefaultPhotoCamera, maxPriceDefaultPhotoCamera, minPriceDefaultVideoCamera, maxPriceDefaultVideoCamera, setInputMaxPrice, setInputMinPrice]);
 
   useEffect(() => {
     if(isUserChanged) {
@@ -200,7 +344,7 @@ function Filters({
       setInputMinPrice(nevMinPrice.toString());
       setInputMaxPrice(nevMaxPrice.toString());
     }
-  }, [selectedCategory, selectedTypes, selectedLevels, products, isUserChanged]);
+  }, [selectedCategory, selectedTypes, selectedLevels, products, isUserChanged, setInputMinPrice, setInputMaxPrice]);
 
   return (
     <div className="catalog-filter">
@@ -366,4 +510,3 @@ function Filters({
 }
 
 export default Filters;
-

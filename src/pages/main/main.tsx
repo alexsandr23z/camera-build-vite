@@ -25,6 +25,8 @@ function Main(): React.JSX.Element {
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [inputMinPrice, setInputMinPrice] = useState<string>(minPrice !== null ? minPrice.toString() : '');
+  const [inputMaxPrice, setInputMaxPrice] = useState<string>(maxPrice !== null ? maxPrice.toString() : '');
   const [productsLength, setProductsLength] = useState<number>(products.length);
 
   const paginationCount: number = Math.ceil(productsLength / limit);
@@ -53,40 +55,51 @@ function Main(): React.JSX.Element {
   }, [products, setShowingCards, setSortType, setSortOrder]);
 
   const handleCategoryChange = useCallback((category: string | null) => {
+    localStorage.setItem('category', String(category));
     setSelectedTypes([]);
     setSelectedLevels([]);
 
     setSelectedCategory(category);
     setMinPrice(null);
     setMaxPrice(null);
+    setInputMinPrice('');
+    setInputMaxPrice('');
   }, [setSelectedTypes, setSelectedLevels, setSelectedCategory, setMinPrice, setMaxPrice]);
 
   const handleTypeChange = useCallback((types: string[]) => {
+    localStorage.setItem('types', JSON.stringify(types));
     setSelectedTypes(types);
     setMinPrice(null);
     setMaxPrice(null);
+    setInputMinPrice('');
+    setInputMaxPrice('');
   }, [setSelectedTypes]);
 
   const handleLevelChange = useCallback((levels: string[]) => {
+    localStorage.setItem('levels', String(levels));
     setSelectedLevels(levels);
     setMinPrice(null);
     setMaxPrice(null);
+    setInputMinPrice('');
+    setInputMaxPrice('');
   }, [setSelectedLevels]);
 
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMinPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
     setMinPrice(newMinPrice);
+    localStorage.setItem('min', String(newMinPrice));
   };
 
   const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMaxPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
     setMaxPrice(newMaxPrice);
+    localStorage.setItem('max', String(newMaxPrice));
   };
 
   useEffect(() => {
     if (minProductIndex !== null && maxProductIndex && isMountedRef) {
       const filteredProducts = products
-        .filter((product) => !selectedCategory || product.category === selectedCategory)
+        .filter((product) => selectedCategory === null || product.category === selectedCategory)
         .filter((product) => selectedTypes.length === 0 || selectedTypes.includes(product.type))
         .filter((product) => selectedLevels.length === 0 || selectedLevels.includes(product.level));
 
@@ -107,9 +120,15 @@ function Main(): React.JSX.Element {
       const currentSearchParams = new URLSearchParams(window.location.search);
       currentSearchParams.set('sortType', sortType);
       currentSearchParams.set('sortOrder', sortOrder);
+      currentSearchParams.set('category', String(selectedCategory));
+      currentSearchParams.set('types', String(selectedTypes));
+      currentSearchParams.set('levels', String(selectedLevels));
+      currentSearchParams.set('min', inputMinPrice);
+      currentSearchParams.set('max', inputMaxPrice);
       window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
     }
-  }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder, selectedCategory, selectedTypes, selectedLevels, minPrice, maxPrice]);
+
+  }, [maxProductIndex, minProductIndex, products, isMountedRef, sortType, sortOrder, selectedCategory, selectedTypes, selectedLevels, minPrice, maxPrice, inputMinPrice, inputMaxPrice]);
 
   return (
     <div className="wrapper">
@@ -152,7 +171,19 @@ function Main(): React.JSX.Element {
                     onMaxPriceChange={handleMaxPriceChange}
                     minPrice={minPrice}
                     maxPrice={maxPrice}
+                    setMinPrice={setMinPrice}
+                    setMaxPrice={setMaxPrice}
                     products={products}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    selectedTypes={selectedTypes}
+                    setSelectedTypes={setSelectedTypes}
+                    selectedLevels={selectedLevels}
+                    setSelectedLevels={setSelectedLevels}
+                    inputMinPrice={inputMinPrice}
+                    setInputMinPrice={setInputMinPrice}
+                    inputMaxPrice={inputMaxPrice}
+                    setInputMaxPrice={setInputMaxPrice}
                   />
                 </div>
                 <div className="catalog__content">

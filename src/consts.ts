@@ -38,13 +38,13 @@ export enum ProductTabsSearch {
 }
 
 export enum SortType {
-  NoneType = 'noneType',
+  NoneType = '',
   SortPrice = 'sortPrice',
   SortPopular = 'sortPopular',
 }
 
 export enum SortOrder {
-  NoneOrder = 'noneOrder',
+  NoneOrder = '',
   Down = 'down',
   Up = 'up',
 }
