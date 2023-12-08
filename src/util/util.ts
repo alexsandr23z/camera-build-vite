@@ -26,3 +26,21 @@ export function compareFunction(a: TProduct, b: TProduct, sortType: SortType, so
   }
   return 0;
 }
+
+export const collectFocusableElements = (element: HTMLElement | null) => {
+  const focusableElements: HTMLElement[] = [];
+
+  const collect = (el: HTMLElement | null) => {
+    if (el && el.getAttribute('tabindex')) {
+      focusableElements.push(el);
+    }
+
+    for (const child of Array.from(el?.children || [])) {
+      collect(child as HTMLElement);
+    }
+  };
+
+  collect(element);
+
+  return focusableElements;
+};

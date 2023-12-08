@@ -18,22 +18,6 @@ function FormSearch(): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const firstItemRef = useRef<HTMLLIElement | null>(null);
 
-  useEffect(() => {
-    if (listRef.current && selectedItemIndex !== null) {
-      const focusedItem = listRef.current.querySelector(`.form-search__select-item.${Styles.focus}`);
-      if (focusedItem) {
-        const listRect = listRef.current.getBoundingClientRect();
-        const itemRect = focusedItem.getBoundingClientRect();
-
-        if (itemRect.bottom > listRect.bottom) {
-          listRef.current.scrollTop += itemRect.bottom - listRect.bottom;
-        } else if (itemRect.top < listRect.top) {
-          listRef.current.scrollTop -= listRect.top - itemRect.top;
-        }
-      }
-    }
-  }, [selectedItemIndex]);
-
   const handleFormSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = evt.target.value;
     setValue(inputValue);
@@ -162,15 +146,6 @@ function FormSearch(): React.JSX.Element {
         setFilteredProducts(resultProducts);
         setIsOpen(true);
         setSelectedItemIndex(resultProducts.length > 0 ? 0 : null);
-
-        setTimeout(() => {
-          if (listRef.current) {
-            const firstItem = listRef.current.querySelector(`.form-search__select-item.${Styles.focus}`) as HTMLElement;
-            if (firstItem) {
-              firstItem.focus();
-            }
-          }
-        }, 0);
       }
     };
 

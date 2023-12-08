@@ -5,6 +5,7 @@ export const PRODUCT_SIMILAR_STEP = 3;
 export const PRODUCT_SIMILAR_END = 3;
 export const PRODUCT_SIMILAR_START = 0;
 export const START_SEARCH_FORM = 3;
+export const SHOWING_REVIEWS_COUNT = 3;
 
 export enum AppRoute {
   Main = '/',
@@ -67,4 +68,15 @@ export enum ProductLevel {
   Professional = 'Профессиональный'
 }
 
+export enum FilterUrl {
+  Category = 'category',
+  Types = 'types',
+  Levels = 'levels',
+  Min = 'min',
+  Max = 'max'
+}
 
+export enum SortUrl {
+  SortTypeUrl = 'sortType',
+  SortOrderUrl = 'sortOrder',
+}

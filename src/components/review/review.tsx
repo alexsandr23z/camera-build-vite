@@ -4,6 +4,7 @@ import { fetchReviews } from '../../store/api-action/review-api/review-api';
 import ReviewList from './review-list';
 import ReviewForm from './review-form';
 import ReviewModalThanksPurchase from './review-modal-thanks-purchase';
+import { SHOWING_REVIEWS_COUNT } from '../../consts';
 
 
 type TReviewBlockProps = {
@@ -15,7 +16,7 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
   const reviews = useAppSelector((state) => state.reviews.reviews);
   const sortReview = [...reviews].sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime());
   const [modalReviewFormActive, setModalReviewFormActive] = useState(false);
-  const [showingReviews, setShowingReviews] = useState(3);
+  const [showingReviews, setShowingReviews] = useState(SHOWING_REVIEWS_COUNT);
   const [modalThanksPurchaseActive, setModalThanksPurchaseActive] = useState(false);
   const reviewsLength = sortReview.length;
 
@@ -26,7 +27,7 @@ function ReviewBlock({id}: TReviewBlockProps): React.JSX.Element {
   }, [dispatch, id]);
 
   const handleReviewClick = () => {
-    setShowingReviews(showingReviews + 3);
+    setShowingReviews(showingReviews + SHOWING_REVIEWS_COUNT);
   };
 
   return (

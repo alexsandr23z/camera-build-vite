@@ -5,6 +5,7 @@ import { setFormReviewValid, setIsSends, updateAdvantage, updateDisadvantage, up
 import { submitReview } from '../../store/api-action/review-api/review-api';
 import { TProduct } from '../../types/product';
 import cn from 'classnames';
+import { collectFocusableElements } from '../../util/util';
 
 type TReviewFormProps = {
   modalReviewFormActive: boolean;
@@ -80,15 +81,17 @@ function ReviewForm({modalReviewFormActive, setModalReviewFormActive, id, setMod
   const refLastFocusable = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const focusableElements = Array.from<HTMLElement>(
-      refOuter.current?.querySelectorAll('[tabindex]') ?? []
-    );
+    const outerElement = refOuter.current;
 
-    refFirstFocusable.current = focusableElements[0];
-    refLastFocusable.current = focusableElements[focusableElements.length - 1];
+    if (outerElement) {
+      const focusableElements = collectFocusableElements(outerElement);
 
-    refFirstFocusable.current.focus();
-  }, []);
+      refFirstFocusable.current = focusableElements[0] || null;
+      refLastFocusable.current = focusableElements[focusableElements.length - 1] || null;
+
+      refFirstFocusable.current?.focus();
+    }
+  }, [refOuter]);
 
   const onKeyDown = useCallback((e: React.KeyboardEvent) => {
 

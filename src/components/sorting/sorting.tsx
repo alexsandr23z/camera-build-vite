@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SortOrder, SortType } from '../../consts';
+import { SortOrder, SortType, SortUrl } from '../../consts';
 
 type TSorting = {
   handleSortChange: (type: SortType, order: SortOrder) => void;
@@ -16,25 +16,25 @@ function Sorting({ handleSortChange, sortType, setSortType, sortOrder, setSortOr
   const updateSearchParams = (type: SortType, order: SortOrder) => {
     const currentSearchParams = new URLSearchParams(searchParams);
 
-    currentSearchParams.set('sortType', type);
-    currentSearchParams.set('sortOrder', order);
+    currentSearchParams.set(SortUrl.SortTypeUrl, type);
+    currentSearchParams.set(SortUrl.SortOrderUrl, order);
 
     window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
   };
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlSortType = urlSearchParams.get('sortType');
-    const urlSortOrder = urlSearchParams.get('sortOrder');
+    const urlSortType = urlSearchParams.get(SortUrl.SortTypeUrl);
+    const urlSortOrder = urlSearchParams.get(SortUrl.SortOrderUrl);
 
     if (urlSortType && urlSortOrder) {
       setSortType(urlSortType as SortType);
       setSortOrder(urlSortOrder as SortOrder);
-      sessionStorage.setItem('sortType', urlSortType);
-      sessionStorage.setItem('sortOrder', urlSortOrder);
+      sessionStorage.setItem(SortUrl.SortTypeUrl, urlSortType);
+      sessionStorage.setItem(SortUrl.SortOrderUrl, urlSortOrder);
     } else {
-      const sessionSortType = sessionStorage.getItem('sortType');
-      const sessionSortOrder = sessionStorage.getItem('sortOrder');
+      const sessionSortType = sessionStorage.getItem(SortUrl.SortTypeUrl);
+      const sessionSortOrder = sessionStorage.getItem(SortUrl.SortOrderUrl);
 
       if (sessionSortType !== null && sessionSortOrder !== null) {
         setSortType(sessionSortType as SortType);
@@ -47,13 +47,13 @@ function Sorting({ handleSortChange, sortType, setSortType, sortOrder, setSortOr
   }, [setSortType, setSortOrder]);
 
   useEffect(() => {
-    sessionStorage.setItem('sortType', sortType);
-    sessionStorage.setItem('sortOrder', sortOrder);
+    sessionStorage.setItem(SortUrl.SortTypeUrl, sortType);
+    sessionStorage.setItem(SortUrl.SortOrderUrl, sortOrder);
 
     const urlSearchParams = new URLSearchParams(window.location.search);
-    if (urlSearchParams.get('sortType') !== null || urlSearchParams.get('sortOrder') !== null) {
-      localStorage.setItem('sortType', sortType);
-      localStorage.setItem('sortOrder', sortOrder);
+    if (urlSearchParams.get(SortUrl.SortTypeUrl) !== null || urlSearchParams.get(SortUrl.SortOrderUrl) !== null) {
+      localStorage.setItem(SortUrl.SortTypeUrl, sortType);
+      localStorage.setItem(SortUrl.SortOrderUrl, sortOrder);
     }
   }, [sortType, sortOrder]);
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ProductCategory, ProductLevel, ProductType } from '../../consts';
+import { FilterUrl, ProductCategory, ProductLevel, ProductType } from '../../consts';
 import { TProducts } from '../../types/product';
-// import { useSearchParams } from 'react-router-dom';
 
 type TFilters = {
   onCategoryChange: (category: string | null) => void;
@@ -53,112 +52,112 @@ function Filters({
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlCategory = urlSearchParams.get('category');
+    const urlCategory = urlSearchParams.get(FilterUrl.Category);
 
     if (urlCategory !== null && urlCategory !== 'null') {
       setSelectedCategory(urlCategory);
-      sessionStorage.setItem('category', urlCategory);
+      sessionStorage.setItem(FilterUrl.Category, urlCategory);
     } else if (urlCategory === 'null') {
       setSelectedCategory(null);
-      sessionStorage.setItem('category', 'null');
+      sessionStorage.setItem(FilterUrl.Category, 'null');
     } else {
-      const sessionCategory = sessionStorage.getItem('category');
+      const sessionCategory = sessionStorage.getItem(FilterUrl.Category);
       if (sessionCategory !== null && sessionCategory !== 'null') {
         setSelectedCategory(sessionCategory);
       } else {
         setSelectedCategory(null);
-        sessionStorage.setItem('category', 'null');
+        sessionStorage.setItem(FilterUrl.Category, 'null');
       }
     }
   }, [setSelectedCategory]);
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlTypes = urlSearchParams.getAll('types');
+    const urlTypes = urlSearchParams.getAll(FilterUrl.Types);
 
     if (urlTypes.length > 0 && urlTypes[0] !== '') {
       const firstType = Array.isArray(urlTypes) ? urlTypes[0] : urlTypes;
       const typesArray = firstType.split(',');
 
       setSelectedTypes(typesArray);
-      sessionStorage.setItem('types', JSON.stringify(typesArray));
+      sessionStorage.setItem(FilterUrl.Types, JSON.stringify(typesArray));
     } else if (urlTypes[0] === '') {
       setSelectedTypes([]);
-      sessionStorage.setItem('types', '');
+      sessionStorage.setItem(FilterUrl.Types, '');
     } else {
-      const sessionTypes = sessionStorage.getItem('types');
+      const sessionTypes = sessionStorage.getItem(FilterUrl.Types);
       if (sessionTypes !== null && sessionTypes !== '') {
         setSelectedTypes(JSON.parse(sessionTypes) as string[]);
       } else {
         setSelectedTypes([]);
-        sessionStorage.setItem('types', '');
+        sessionStorage.setItem(FilterUrl.Types, '');
       }
     }
   }, [setSelectedTypes]);
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlLevels = urlSearchParams.getAll('levels');
+    const urlLevels = urlSearchParams.getAll(FilterUrl.Levels);
 
     if (urlLevels.length > 0 && urlLevels[0] !== '') {
       const firstLevels = Array.isArray(urlLevels) ? urlLevels[0] : urlLevels;
       const levelsArray = firstLevels.split(',');
 
       setSelectedLevels(levelsArray);
-      sessionStorage.setItem('levels', JSON.stringify(levelsArray));
+      sessionStorage.setItem(FilterUrl.Levels, JSON.stringify(levelsArray));
     } else if (urlLevels[0] === '') {
       setSelectedLevels([]);
-      sessionStorage.setItem('levels', '');
+      sessionStorage.setItem(FilterUrl.Levels, '');
     } else {
-      const sessionLevels = sessionStorage.getItem('levels');
+      const sessionLevels = sessionStorage.getItem(FilterUrl.Levels);
       if (sessionLevels !== null && sessionLevels !== '') {
         setSelectedLevels(JSON.parse(sessionLevels) as string[]);
       } else {
         setSelectedLevels([]);
-        sessionStorage.setItem('levels', '');
+        sessionStorage.setItem(FilterUrl.Levels, '');
       }
     }
   }, [setSelectedLevels]);
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlMinPrice = urlSearchParams.get('min');
+    const urlMinPrice = urlSearchParams.get(FilterUrl.Min);
 
     if (urlMinPrice !== null && urlMinPrice !== 'null' && urlMinPrice !== '') {
       setMinPrice(Number(urlMinPrice));
       setInputMinPrice(urlMinPrice);
-      sessionStorage.setItem('min', urlMinPrice);
+      sessionStorage.setItem(FilterUrl.Min, urlMinPrice);
     } else if (urlMinPrice === '') {
       setMinPrice(null);
       setInputMinPrice('');
-      sessionStorage.setItem('min', 'null');
+      sessionStorage.setItem(FilterUrl.Min, 'null');
     } else {
-      const sessionMinPrice = sessionStorage.getItem('min');
+      const sessionMinPrice = sessionStorage.getItem(FilterUrl.Min);
       if (sessionMinPrice !== null && sessionMinPrice !== 'null') {
         setMinPrice(Number(sessionMinPrice));
         setInputMinPrice(sessionMinPrice);
       } else {
         setMinPrice(null);
         setInputMinPrice('');
-        sessionStorage.setItem('min', 'null');
+        sessionStorage.setItem(FilterUrl.Min, 'null');
       }
     }
   }, [setInputMinPrice, setMinPrice]);
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const urlMaxPrice = urlSearchParams.get('max');
+    const urlMaxPrice = urlSearchParams.get(FilterUrl.Max);
 
     if (urlMaxPrice !== null && urlMaxPrice !== 'null' && urlMaxPrice !== '') {
       setMaxPrice(Number(urlMaxPrice));
       setInputMaxPrice(urlMaxPrice);
-      sessionStorage.setItem('max', urlMaxPrice);
+      sessionStorage.setItem(FilterUrl.Max, urlMaxPrice);
     } else if (urlMaxPrice === '') {
       setMaxPrice(null);
       setInputMaxPrice('');
-      sessionStorage.setItem('max', 'null');
+      sessionStorage.setItem(FilterUrl.Max, 'null');
     } else {
-      const sessionMaxPrice = sessionStorage.getItem('max');
+      const sessionMaxPrice = sessionStorage.getItem(FilterUrl.Max);
 
       if (sessionMaxPrice !== null && sessionMaxPrice !== 'null') {
         setMaxPrice(Number(sessionMaxPrice));
@@ -166,7 +165,7 @@ function Filters({
       } else {
         setMaxPrice(null);
         setInputMaxPrice('');
-        sessionStorage.setItem('max', 'null');
+        sessionStorage.setItem(FilterUrl.Max, 'null');
       }
     }
   }, [setInputMaxPrice, setMaxPrice]);

@@ -8,7 +8,7 @@ import SwiperSlides from '../../components/swiper-slide/swiper-slide';
 import Pagination from '../../components/pagination/pagination';
 import { TProduct } from '../../types/product';
 import Sorting from '../../components/sorting/sorting';
-import { SortOrder, SortType } from '../../consts';
+import { FilterUrl, SortOrder, SortType, SortUrl } from '../../consts';
 import { compareFunction} from '../../util/util';
 import Filters from '../../components/filters/filters';
 import { toast } from 'react-toastify';
@@ -64,8 +64,8 @@ function Main(): React.JSX.Element {
   }, []);
 
   const handleSortChange = useCallback((type: SortType, order: SortOrder) => {
-    localStorage.setItem('sortType', type);
-    localStorage.setItem('sortOrder', order);
+    localStorage.setItem(SortUrl.SortTypeUrl, type);
+    localStorage.setItem(SortUrl.SortOrderUrl, order);
     setSortType(type);
     setSortOrder(order);
     if (type === SortType.NoneType && order === SortOrder.NoneOrder) {
@@ -77,7 +77,7 @@ function Main(): React.JSX.Element {
   }, [products, setShowingCards, setSortType, setSortOrder]);
 
   const handleCategoryChange = useCallback((category: string | null) => {
-    localStorage.setItem('category', String(category));
+    localStorage.setItem(FilterUrl.Category, String(category));
     setSelectedTypes([]);
     setSelectedLevels([]);
 
@@ -89,7 +89,7 @@ function Main(): React.JSX.Element {
   }, [setSelectedTypes, setSelectedLevels, setSelectedCategory, setMinPrice, setMaxPrice]);
 
   const handleTypeChange = useCallback((types: string[]) => {
-    localStorage.setItem('types', JSON.stringify(types));
+    localStorage.setItem(FilterUrl.Types, JSON.stringify(types));
     setSelectedTypes(types);
     setMinPrice(null);
     setMaxPrice(null);
@@ -98,7 +98,7 @@ function Main(): React.JSX.Element {
   }, [setSelectedTypes]);
 
   const handleLevelChange = useCallback((levels: string[]) => {
-    localStorage.setItem('levels', String(levels));
+    localStorage.setItem(FilterUrl.Levels, String(levels));
     setSelectedLevels(levels);
     setMinPrice(null);
     setMaxPrice(null);
@@ -109,13 +109,13 @@ function Main(): React.JSX.Element {
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMinPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
     setMinPrice(newMinPrice);
-    localStorage.setItem('min', String(newMinPrice));
+    localStorage.setItem(FilterUrl.Min, String(newMinPrice));
   };
 
   const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMaxPrice = event.target.value !== '' ? Math.max(0, parseInt(event.target.value, 10)) : null;
     setMaxPrice(newMaxPrice);
-    localStorage.setItem('max', String(newMaxPrice));
+    localStorage.setItem(FilterUrl.Max, String(newMaxPrice));
   };
 
   useEffect(() => {
@@ -140,13 +140,13 @@ function Main(): React.JSX.Element {
       setShowingCards(showingProducts);
 
       const currentSearchParams = new URLSearchParams(window.location.search);
-      currentSearchParams.set('sortType', sortType);
-      currentSearchParams.set('sortOrder', sortOrder);
-      currentSearchParams.set('category', String(selectedCategory));
-      currentSearchParams.set('types', String(selectedTypes));
-      currentSearchParams.set('levels', String(selectedLevels));
-      currentSearchParams.set('min', inputMinPrice);
-      currentSearchParams.set('max', inputMaxPrice);
+      currentSearchParams.set(SortUrl.SortTypeUrl, sortType);
+      currentSearchParams.set(SortUrl.SortOrderUrl, sortOrder);
+      currentSearchParams.set(FilterUrl.Category, String(selectedCategory));
+      currentSearchParams.set(FilterUrl.Types, String(selectedTypes));
+      currentSearchParams.set(FilterUrl.Levels, String(selectedLevels));
+      currentSearchParams.set(FilterUrl.Min, inputMinPrice);
+      currentSearchParams.set(FilterUrl.Max, inputMaxPrice);
       window.history.replaceState({}, '', `${window.location.pathname}?${currentSearchParams.toString()}`);
     }
 

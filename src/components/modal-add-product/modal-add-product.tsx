@@ -1,5 +1,6 @@
 import React, {useEffect, useCallback, useRef} from 'react';
 import { TProduct } from '../../types/product';
+import { collectFocusableElements } from '../../util/util';
 
 type TModalAddProductProps = {
   product: TProduct;
@@ -31,15 +32,17 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
   const refLastFocusable = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const focusableElements = Array.from<HTMLElement>(
-      refOuter.current?.querySelectorAll('[tabindex]') ?? []
-    );
+    const outerElement = refOuter.current;
 
-    refFirstFocusable.current = focusableElements[0];
-    refLastFocusable.current = focusableElements[focusableElements.length - 1];
+    if (outerElement) {
+      const focusableElements = collectFocusableElements(outerElement);
 
-    refFirstFocusable.current.focus();
-  }, []);
+      refFirstFocusable.current = focusableElements[0] || null;
+      refLastFocusable.current = focusableElements[focusableElements.length - 1] || null;
+
+      refFirstFocusable.current?.focus();
+    }
+  }, [refOuter]);
 
   const onKeyDown = useCallback((e: React.KeyboardEvent) => {
 
