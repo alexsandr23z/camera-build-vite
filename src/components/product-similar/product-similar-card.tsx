@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import styles from './product.-similar.module.css';
+import { formatNumberPrice } from '../../util/util';
 
 type TProductsSimilarCardProps = {
   product: TProduct;
@@ -34,7 +35,7 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
         <Rating rating={product.rating} reviewCount={product.reviewCount} />
         <p className="product-card__title" data-testid="product-title">{product.name}</p>
         <p className="product-card__price">
-          <span className="visually-hidden">Цена:</span>{`${product.price}₽`}
+          <span className="visually-hidden">Цена:</span>{formatNumberPrice(product.price)} ₽
         </p>
       </div>
       <div className="product-card__buttons">

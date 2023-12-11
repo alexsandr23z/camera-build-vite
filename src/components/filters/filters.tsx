@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { FilterUrl, ProductCategory, ProductLevel, ProductType } from '../../consts';
 import { TProducts } from '../../types/product';
 
@@ -48,8 +48,6 @@ function Filters({
   inputMaxPrice,
   setInputMaxPrice
 }: TFilters): React.JSX.Element {
-  const [isUserChanged, setIsUserChanged] = useState<boolean>(false);
-
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const urlCategory = urlSearchParams.get(FilterUrl.Category);
@@ -124,22 +122,22 @@ function Filters({
     const urlMinPrice = urlSearchParams.get(FilterUrl.Min);
 
     if (urlMinPrice !== null && urlMinPrice !== 'null' && urlMinPrice !== '') {
-      setMinPrice(Number(urlMinPrice));
-      setInputMinPrice(urlMinPrice);
       sessionStorage.setItem(FilterUrl.Min, urlMinPrice);
+      setInputMinPrice(urlMinPrice);
+      setMinPrice(Number(urlMinPrice));
     } else if (urlMinPrice === '') {
-      setMinPrice(null);
-      setInputMinPrice('');
       sessionStorage.setItem(FilterUrl.Min, 'null');
+      setInputMinPrice('');
+      setMinPrice(null);
     } else {
       const sessionMinPrice = sessionStorage.getItem(FilterUrl.Min);
       if (sessionMinPrice !== null && sessionMinPrice !== 'null') {
-        setMinPrice(Number(sessionMinPrice));
         setInputMinPrice(sessionMinPrice);
+        setMinPrice(Number(sessionMinPrice));
       } else {
-        setMinPrice(null);
-        setInputMinPrice('');
         sessionStorage.setItem(FilterUrl.Min, 'null');
+        setInputMinPrice('');
+        setMinPrice(null);
       }
     }
   }, [setInputMinPrice, setMinPrice]);
@@ -149,22 +147,22 @@ function Filters({
     const urlMaxPrice = urlSearchParams.get(FilterUrl.Max);
 
     if (urlMaxPrice !== null && urlMaxPrice !== 'null' && urlMaxPrice !== '') {
-      setMaxPrice(Number(urlMaxPrice));
       setInputMaxPrice(urlMaxPrice);
+      setMaxPrice(Number(urlMaxPrice));
       sessionStorage.setItem(FilterUrl.Max, urlMaxPrice);
     } else if (urlMaxPrice === '') {
-      setMaxPrice(null);
       setInputMaxPrice('');
+      setMaxPrice(null);
       sessionStorage.setItem(FilterUrl.Max, 'null');
     } else {
       const sessionMaxPrice = sessionStorage.getItem(FilterUrl.Max);
 
       if (sessionMaxPrice !== null && sessionMaxPrice !== 'null') {
-        setMaxPrice(Number(sessionMaxPrice));
         setInputMaxPrice(sessionMaxPrice);
+        setMaxPrice(Number(sessionMaxPrice));
       } else {
-        setMaxPrice(null);
         setInputMaxPrice('');
+        setMaxPrice(null);
         sessionStorage.setItem(FilterUrl.Max, 'null');
       }
     }
@@ -186,10 +184,19 @@ function Filters({
     setSelectedCategory(newCategory);
     onCategoryChange(newCategory);
 
-    setSelectedTypes([]);
-    setSelectedLevels([]);
-    onTypeChange([]);
-    onLevelChange([]);
+    if(newCategory === ProductCategory.VideoCamera) {
+      const instantOrFilmSelected = selectedTypes.some(
+        (type) => type === ProductType.Instant || type === ProductType.Film
+      );
+      const collectibleOrDigitalSelected = selectedTypes.some(
+        (type) => type === ProductType.Collectible || type === ProductType.Digital
+      );
+      if(instantOrFilmSelected) {
+        setSelectedTypes([]);
+      } if(collectibleOrDigitalSelected && instantOrFilmSelected) {
+        setSelectedTypes(selectedTypes);
+      }
+    }
   };
 
   const handleTypeChange = (types: string) => {
@@ -214,7 +221,6 @@ function Filters({
     const inputValue = event.target.value;
 
     if (inputValue === '' || (parseInt(inputValue, 10) >= 0 && inputValue !== '-')) {
-      setIsUserChanged(true);
       setInputMinPrice(inputValue);
       onMinPriceChange(event);
     }
@@ -224,14 +230,12 @@ function Filters({
     const inputValue = event.target.value;
 
     if (inputValue === '' || (parseInt(inputValue, 10) >= 0 && inputValue !== '-')) {
-      setIsUserChanged(true);
       setInputMaxPrice(inputValue);
       onMaxPriceChange(event);
     }
   };
 
   const handleResetFilters = () => {
-    setIsUserChanged(false);
     setMinPrice(null);
     setMaxPrice(null);
     setInputMinPrice('');
@@ -330,21 +334,6 @@ function Filters({
     }
 
   }, [inputMinPrice, inputMaxPrice, onMinPriceChange, onMaxPriceChange, minPrice, maxPrice, selectedCategory, minPriceDefaultPhotoCamera, maxPriceDefaultPhotoCamera, minPriceDefaultVideoCamera, maxPriceDefaultVideoCamera, setInputMaxPrice, setInputMinPrice]);
-
-  useEffect(() => {
-    if(isUserChanged) {
-      const filteredProducts = products
-        .filter((camera) => (selectedCategory ? camera.category === selectedCategory : true))
-        .filter((camera) => (selectedTypes.length === 0 ? true : selectedTypes.includes(camera.type)))
-        .filter((camera) => (selectedLevels.length === 0 ? true : selectedLevels.includes(camera.level)));
-
-      const nevMinPrice = Math.min(...filteredProducts.map((item) => item.price), 0);
-      const nevMaxPrice = Math.max(...filteredProducts.map((item) => item.price), 0);
-
-      setInputMinPrice(nevMinPrice.toString());
-      setInputMaxPrice(nevMaxPrice.toString());
-    }
-  }, [selectedCategory, selectedTypes, selectedLevels, products, isUserChanged, setInputMinPrice, setInputMaxPrice]);
 
   return (
     <div className="catalog-filter">

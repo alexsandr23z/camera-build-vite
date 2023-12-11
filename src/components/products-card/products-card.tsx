@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import Rating from '../rating/rating';
+import { formatNumberPrice } from '../../util/util';
 
 type TProductProps = {
   product: TProduct;
@@ -38,7 +39,7 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
           {name}
         </p>
         <p className="product-card__price">
-          <span className="visually-hidden">Цена:</span>{`${price}₽`}
+          <span className="visually-hidden">Цена:</span>{formatNumberPrice(price)} ₽
         </p>
       </div>
       <div className="product-card__buttons">

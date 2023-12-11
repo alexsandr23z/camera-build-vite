@@ -3,6 +3,7 @@ import { TProduct } from '../../types/product';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import ProductTabs from '../product-tabs/product-tabs';
 import Rating from '../rating/rating';
+import { formatNumberPrice } from '../../util/util';
 
 type TProductCardInfoProps = {
   product: TProduct;
@@ -34,7 +35,7 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
         <h1 className="title title--h3" data-testid="product-title">{name}</h1>
         <Rating rating={rating} reviewCount={reviewCount}/>
         <p className="product__price">
-          <span className="visually-hidden">Цена:</span>{`${price}₽`}
+          <span className="visually-hidden">Цена:</span>{formatNumberPrice(price)} ₽
         </p>
         <button className="btn btn--purple" type="button"
           data-testid="add-to-cart-button"

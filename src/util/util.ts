@@ -44,3 +44,5 @@ export const collectFocusableElements = (element: HTMLElement | null) => {
 
   return focusableElements;
 };
+
+export const formatNumberPrice = (prece: number) => prece.toLocaleString('fr-FR').replace(/,/g, ' ');

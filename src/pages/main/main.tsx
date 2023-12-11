@@ -78,15 +78,12 @@ function Main(): React.JSX.Element {
 
   const handleCategoryChange = useCallback((category: string | null) => {
     localStorage.setItem(FilterUrl.Category, String(category));
-    setSelectedTypes([]);
-    setSelectedLevels([]);
-
     setSelectedCategory(category);
     setMinPrice(null);
     setMaxPrice(null);
     setInputMinPrice('');
     setInputMaxPrice('');
-  }, [setSelectedTypes, setSelectedLevels, setSelectedCategory, setMinPrice, setMaxPrice]);
+  }, [setSelectedCategory, setMinPrice, setMaxPrice]);
 
   const handleTypeChange = useCallback((types: string[]) => {
     localStorage.setItem(FilterUrl.Types, JSON.stringify(types));

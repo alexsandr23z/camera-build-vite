@@ -1,6 +1,6 @@
 import React, {useEffect, useCallback, useRef} from 'react';
 import { TProduct } from '../../types/product';
-import { collectFocusableElements } from '../../util/util';
+import { collectFocusableElements, formatNumberPrice } from '../../util/util';
 
 type TModalAddProductProps = {
   product: TProduct;
@@ -97,7 +97,7 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
                 <li className="basket-item__list-item">{level} уровень</li>
               </ul>
               <p className="basket-item__price">
-                <span className="visually-hidden">Цена:</span>{`${price}₽`}
+                <span className="visually-hidden">Цена:</span>{formatNumberPrice(price)} ₽
               </p>
             </div>
           </div>

@@ -22,6 +22,12 @@ function FormSearch(): React.JSX.Element {
     const inputValue = evt.target.value;
     setValue(inputValue);
 
+    if (inputValue.length > 0) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+
     if (inputValue.length >= START_SEARCH_FORM) {
       const resultProducts = products.filter(
         (product) =>
@@ -29,10 +35,8 @@ function FormSearch(): React.JSX.Element {
       );
 
       setFilteredProducts(resultProducts);
-      setIsOpen(true);
     } else {
       setFilteredProducts([]);
-      setIsOpen(false);
     }
   };
 
@@ -115,16 +119,15 @@ function FormSearch(): React.JSX.Element {
     filteredProductsRef.current = filteredProducts;
   }, [filteredProducts]);
 
-  useEffect(() => {
-    const selectedProduct = selectedItemIndex !== null ? filteredProductsRef.current[selectedItemIndex] : null;
-    setValue(selectedProduct ? selectedProduct.name : '');
-  }, [selectedItemIndex]);
-
   const handleReset = () => {
     setIsOpen(false);
     setFilteredProducts([]);
     setValue('');
     setSelectedItemIndex(null);
+
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   useEffect(() => {
@@ -163,7 +166,7 @@ function FormSearch(): React.JSX.Element {
   }, [value, products, updateActiveItem]);
 
   return (
-    <div className={value.length >= START_SEARCH_FORM && isOpen ? 'form-search list-opened' : 'form-search'}>
+    <div className={isOpen ? 'form-search list-opened' : 'form-search'}>
       <form>
         <label>
           <svg
@@ -217,6 +220,7 @@ function FormSearch(): React.JSX.Element {
         </svg>
         <span className="visually-hidden">Сбросить поиск</span>
       </button>
+
     </div>
   );
 }
