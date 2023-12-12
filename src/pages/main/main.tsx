@@ -123,7 +123,7 @@ function Main(): React.JSX.Element {
         .filter((product) => selectedLevels.length === 0 || selectedLevels.includes(product.level));
 
       const filteredByPrice = filteredProducts
-        .filter((product) => (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice));
+        .filter((product) => (inputMinPrice === '' || product.price >= Number(inputMinPrice)) && (inputMaxPrice === '' || product.price <= Number(inputMaxPrice)));
 
       const newPrise = filteredByPrice.map((item) => item.price);
       if(newPrise.length > 0) {
