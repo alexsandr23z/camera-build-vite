@@ -248,7 +248,7 @@ function Filters({
     onLevelChange([]);
   };
 
-  useEffect(() => {
+  const handleBlur = () => {
     const minNumericValue = inputMinPrice !== '' ? parseInt(inputMinPrice, 10) : null;
     const maxNumericValue = inputMaxPrice !== '' ? parseInt(inputMaxPrice, 10) : null;
 
@@ -333,7 +333,7 @@ function Filters({
       }
     }
 
-  }, [inputMinPrice, inputMaxPrice, onMinPriceChange, onMaxPriceChange, minPrice, maxPrice, selectedCategory, minPriceDefaultPhotoCamera, maxPriceDefaultPhotoCamera, minPriceDefaultVideoCamera, maxPriceDefaultVideoCamera, setInputMaxPrice, setInputMinPrice]);
+  };
 
   return (
     <div className="catalog-filter">
@@ -350,6 +350,7 @@ function Filters({
                   placeholder={minPrice !== null ? String(minPrice) : ''}
                   value={String(inputMinPrice)}
                   onChange={handleMinPriceChange}
+                  onBlur={handleBlur}
                 />
               </label>
             </div>
@@ -361,6 +362,7 @@ function Filters({
                   placeholder={maxPrice !== null ? String(maxPrice) : ''}
                   value={String(inputMaxPrice)}
                   onChange={handleMaxPriceChange}
+                  onBlur={handleBlur}
                 />
               </label>
             </div>
