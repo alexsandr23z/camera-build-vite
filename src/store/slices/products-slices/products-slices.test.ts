@@ -7,12 +7,14 @@ describe('Products Reducer', () => {
     const initialState = {
       products: [],
       isLoading: false,
+      basketProduct: []
     };
 
     const nextState = productsSlices(initialState, { type: fetchProducts.pending.type });
     expect(nextState).toEqual({
       products: [],
       isLoading: true,
+      basketProduct: []
     });
   });
 
@@ -20,6 +22,7 @@ describe('Products Reducer', () => {
     const initialState = {
       products: [],
       isLoading: true,
+      basketProduct: []
     };
 
     const payload = productsMock;
@@ -27,6 +30,7 @@ describe('Products Reducer', () => {
     expect(nextState).toEqual({
       products: payload,
       isLoading: false,
+      basketProduct: []
     });
   });
 });
