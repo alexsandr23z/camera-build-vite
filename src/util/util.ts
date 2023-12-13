@@ -1,5 +1,5 @@
 import { MAX_COUNT_STARS, SortOrder, SortType } from '../consts';
-import { TProduct } from '../types/product';
+import { TProduct, TProducts } from '../types/product';
 
 export const showActiveRateng = (rating: number) => {
   const activeRating = [];
@@ -46,3 +46,16 @@ export const collectFocusableElements = (element: HTMLElement | null) => {
 };
 
 export const formatNumberPrice = (prece: number) => prece.toLocaleString('fr-FR').replace(/,/g, ' ');
+
+export const loadBasketFromLocalStorage = (): TProducts => {
+  try {
+    const serializedBasket = localStorage.getItem('basket');
+    if (serializedBasket === null) {
+      return [];
+    }
+    return JSON.parse(serializedBasket) as TProducts;
+  } catch (err) {
+    return [];
+  }
+};
+

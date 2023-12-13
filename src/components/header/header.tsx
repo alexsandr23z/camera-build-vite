@@ -42,11 +42,11 @@ function Header(): React.JSX.Element {
           </ul>
         </nav>
         <FormSearch/>
-        <a className="header__basket-link" href="#">
+        <Link className="header__basket-link" to={AppRoute.Basket}>
           <svg width={16} height={16} aria-hidden="true">
             <use xlinkHref="#icon-basket" />
           </svg>
-        </a>
+        </Link>
       </div>
     </header>
   );

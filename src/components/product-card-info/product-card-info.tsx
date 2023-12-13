@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { TProduct } from '../../types/product';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import ProductTabs from '../product-tabs/product-tabs';
 import Rating from '../rating/rating';
 import { formatNumberPrice } from '../../util/util';
+import ModalBasketAddProduct from '../modal-basket-add-product/modal-basket-add-product';
 
 type TProductCardInfoProps = {
   product: TProduct;
@@ -11,8 +12,18 @@ type TProductCardInfoProps = {
 
 function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
+  const [modalBasketAddProductActive, setmodalBasketAddProductActive] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(() => {
+    const storedData = localStorage.getItem(`${product.id}`);
+    return storedData ? (JSON.parse(storedData) as boolean) : false;
+  });
+
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, name, rating, reviewCount} = product;
+
+  useEffect(() => {
+    localStorage.setItem(`${product.id}`, JSON.stringify(isAddedToCart));
+  }, [isAddedToCart, product.id]);
 
   return (
     <div className="container">
@@ -49,7 +60,8 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
           </svg>
           Добавить в корзину
         </button>
-        <ModalAddProduct product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive}/>
+        <ModalAddProduct onAddToCart={() => setIsAddedToCart(true)} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
+        <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <ProductTabs product={product}/>
       </div>
     </div>

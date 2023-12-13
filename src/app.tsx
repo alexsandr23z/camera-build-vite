@@ -36,6 +36,10 @@ function App(): React.JSX.Element {
             element={<Basket/>}
           />
           <Route
+            path={`${AppRoute.Basket}/:id`}
+            element={<Basket/>}
+          />
+          <Route
             path="*"
             element={<NotFound/>}
           />

@@ -1,16 +1,29 @@
 import React, {useEffect, useCallback, useRef} from 'react';
 import { TProduct } from '../../types/product';
 import { collectFocusableElements, formatNumberPrice } from '../../util/util';
+import { useAppDispatch } from '../hook';
+import { addBasketProduct } from '../../store/slices/products-slices/products-slices';
 
 type TModalAddProductProps = {
   product: TProduct;
   modalAddProductActive: boolean;
   setModalAddProductActive: (arg: boolean) => void;
+  setmodalBasketAddProductActive: (arg: boolean) => void;
+  onAddToCart: (arg: boolean) => void;
 }
 
-function ModalAddProduct({product, modalAddProductActive, setModalAddProductActive}: TModalAddProductProps): React.JSX.Element {
+function ModalAddProduct({onAddToCart, product, modalAddProductActive, setModalAddProductActive, setmodalBasketAddProductActive}: TModalAddProductProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, name, vendorCode, level, type, category} = product;
+
+  const handleAddToCart = () => {
+    dispatch(addBasketProduct(product));
+    setmodalBasketAddProductActive(true);
+    document.body.style.overflow = 'hidden';
+    setModalAddProductActive(false);
+    onAddToCart(true);
+  };
 
   useEffect(() => {
     function handleEscapeKey(event: KeyboardEvent) {
@@ -106,6 +119,7 @@ function ModalAddProduct({product, modalAddProductActive, setModalAddProductActi
               tabIndex={0}
               className="btn btn--purple modal__btn modal__btn--fit-width"
               type="button"
+              onClick={handleAddToCart}
             >
               <svg width={24} height={16} aria-hidden={'true'}>
                 <use xlinkHref="#icon-add-basket" />
