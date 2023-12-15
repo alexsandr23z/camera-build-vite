@@ -7,14 +7,18 @@ describe('Products Reducer', () => {
     const initialState = {
       products: [],
       isLoading: false,
-      basketProduct: []
+      basketProduct: [],
+      basketCount: 1,
+      addedToCart: {},
     };
 
     const nextState = productsSlices(initialState, { type: fetchProducts.pending.type });
     expect(nextState).toEqual({
       products: [],
       isLoading: true,
-      basketProduct: []
+      basketProduct: [],
+      basketCount: 1,
+      addedToCart: {},
     });
   });
 
@@ -22,7 +26,9 @@ describe('Products Reducer', () => {
     const initialState = {
       products: [],
       isLoading: true,
-      basketProduct: []
+      basketProduct: [],
+      basketCount: 1,
+      addedToCart: {},
     };
 
     const payload = productsMock;
@@ -30,7 +36,9 @@ describe('Products Reducer', () => {
     expect(nextState).toEqual({
       products: payload,
       isLoading: false,
-      basketProduct: []
+      basketProduct: [],
+      basketCount: 1,
+      addedToCart: {},
     });
   });
 });
