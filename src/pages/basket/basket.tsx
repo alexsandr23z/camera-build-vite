@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 import { useAppSelector } from '../../components/hook';
-import { formatNumberPrice } from '../../util/util';
+import ModalBasketRemoveProduct from '../../modal-basket-remove-product/modal-basket-remove-product';
+import { TProduct } from '../../types/product';
+import BasketProduct from '../../components/basket-product/basket-product';
 
 function Basket(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.basketProduct);
+  const [modalBasketRemoveProductActive, setModalBasketRemoveProductActive] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
 
   return (
     <div className="wrapper">
@@ -48,81 +52,14 @@ function Basket(): React.JSX.Element {
               <h1 className="title title--h2">Корзина</h1>
               <ul className="basket__list">
                 {products.map((product) => (
-                  <li key={product.id} className="basket-item">
-                    <div className="basket-item__img">
-                      <picture>
-                        <source
-                          type="image/webp"
-                          srcSet={product.previewImgWebp && product.previewImgWebp2x}
-                        />
-                        <img
-                          src={product.previewImg}
-                          srcSet={product.previewImg2x}
-                          width={140}
-                          height={120}
-                          alt={product.name}
-                        />
-                      </picture>
-                    </div>
-                    <div className="basket-item__description">
-                      <p className="basket-item__title">{product.name}</p>
-                      <ul className="basket-item__list">
-                        <li className="basket-item__list-item">
-                          <span className="basket-item__article">Артикул:</span>{''}
-                          <span className="basket-item__number">{product.vendorCode}</span>
-                        </li>
-                        <li className="basket-item__list-item">
-                          {product.type} {product.category}
-                        </li>
-                        <li className="basket-item__list-item">
-                          {product.level} уровень
-                        </li>
-                      </ul>
-                    </div>
-                    <p className="basket-item__price">
-                      <span className="visually-hidden">Цена:</span>{formatNumberPrice(product.price)} ₽
-                    </p>
-                    <div className="quantity">
-                      <button
-                        className="btn-icon btn-icon--prev"
-                        aria-label="уменьшить количество товара"
-                      >
-                        <svg width={7} height={12} aria-hidden="true">
-                          <use xlinkHref="#icon-arrow" />
-                        </svg>
-                      </button>
-                      <label className="visually-hidden" htmlFor="counter1" />
-                      <input
-                        type="number"
-                        id="counter1"
-                        defaultValue={2}
-                        min={1}
-                        max={99}
-                        aria-label="количество товара"
-                      />
-                      <button
-                        className="btn-icon btn-icon--next"
-                        aria-label="увеличить количество товара"
-                      >
-                        <svg width={7} height={12} aria-hidden="true">
-                          <use xlinkHref="#icon-arrow" />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="basket-item__total-price">
-                      <span className="visually-hidden">Общая цена:</span>37 940 ₽
-                    </div>
-                    <button
-                      className="cross-btn"
-                      type="button"
-                      aria-label="Удалить товар"
-                    >
-                      <svg width={10} height={10} aria-hidden="true">
-                        <use xlinkHref="#icon-close" />
-                      </svg>
-                    </button>
-                  </li>
-                ))}
+                  <BasketProduct
+                    key={product.id}
+                    product={product}
+                    setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}
+                    setSelectedProduct={setSelectedProduct}
+                  />)
+                )}
+                <ModalBasketRemoveProduct product={selectedProduct} modalBasketRemoveProductActive={modalBasketRemoveProductActive} setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}/>
               </ul>
               <div className="basket__summary">
                 <div className="basket__promo">

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { TProduct } from '../../types/product';
 import Rating from '../rating/rating';
 import { Link } from 'react-router-dom';
@@ -7,22 +7,22 @@ import ModalAddProduct from '../modal-add-product/modal-add-product';
 import styles from './product.-similar.module.css';
 import { formatNumberPrice } from '../../util/util';
 import ModalBasketAddProduct from '../modal-basket-add-product/modal-basket-add-product';
+import { useAppDispatch, useAppSelector } from '../hook';
+import { toggleAddedToCart } from '../../store/slices/products-slices/products-slices';
 
 type TProductsSimilarCardProps = {
   product: TProduct;
 }
 
 function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const [modalBasketAddProductActive, setmodalBasketAddProductActive] = useState(false);
-  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(() => {
-    const storedData = localStorage.getItem(`${product.id}`);
-    return storedData ? (JSON.parse(storedData) as boolean) : false;
-  });
+  const isAddedToCart = useAppSelector((state) => state.products.addedToCart[product.id]);
 
-  useEffect(() => {
-    localStorage.setItem(`${product.id}`, JSON.stringify(isAddedToCart));
-  }, [isAddedToCart, product.id]);
+  const handleToggleAddToCart = () => {
+    dispatch(toggleAddedToCart({ productId: product.id as string, added: !isAddedToCart }));
+  };
 
   return (
     <div className={`product-card is-active ${styles.productSimilarSliderListActive}`}>
@@ -69,7 +69,7 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
               В корзине
             </Link>
           )}
-        <ModalAddProduct onAddToCart={() => setIsAddedToCart(true)} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
+        <ModalAddProduct onAddToCart={handleToggleAddToCart} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${product.id}`}>
           Подробнее

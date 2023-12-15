@@ -1,29 +1,29 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { TProduct } from '../../types/product';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import ProductTabs from '../product-tabs/product-tabs';
 import Rating from '../rating/rating';
 import { formatNumberPrice } from '../../util/util';
 import ModalBasketAddProduct from '../modal-basket-add-product/modal-basket-add-product';
+import { useAppDispatch, useAppSelector } from '../hook';
+import { toggleAddedToCart } from '../../store/slices/products-slices/products-slices';
 
 type TProductCardInfoProps = {
   product: TProduct;
 }
 
 function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const [modalBasketAddProductActive, setmodalBasketAddProductActive] = useState(false);
-  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(() => {
-    const storedData = localStorage.getItem(`${product.id}`);
-    return storedData ? (JSON.parse(storedData) as boolean) : false;
-  });
+  const isAddedToCart = useAppSelector((state) => state.products.addedToCart[product.id]);
+
+  const handleToggleAddToCart = () => {
+    dispatch(toggleAddedToCart({ productId: product.id as string, added: !isAddedToCart }));
+  };
 
   const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
     price, name, rating, reviewCount} = product;
-
-  useEffect(() => {
-    localStorage.setItem(`${product.id}`, JSON.stringify(isAddedToCart));
-  }, [isAddedToCart, product.id]);
 
   return (
     <div className="container">
@@ -60,7 +60,7 @@ function ProductCardInfo({product}: TProductCardInfoProps): React.JSX.Element {
           </svg>
           Добавить в корзину
         </button>
-        <ModalAddProduct onAddToCart={() => setIsAddedToCart(true)} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
+        <ModalAddProduct onAddToCart={handleToggleAddToCart} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <ProductTabs product={product}/>
       </div>
