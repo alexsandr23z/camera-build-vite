@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { formatNumberPrice } from '../../util/util';
 import { TProduct } from '../../types/product';
 
@@ -6,18 +6,11 @@ type TBasketProductProps = {
   product: TProduct;
   setModalBasketRemoveProductActive: (arg: boolean) => void;
   setSelectedProduct: (arg: TProduct | null) => void;
+  quantity: number;
+  setQuantity: (arg: number) => void;
 }
 
-function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedProduct}: TBasketProductProps): React.JSX.Element {
-  const [quantity, setQuantity] = useState(() => {
-    const savedQuantity = localStorage.getItem(`quantity_${product.id}`);
-    return savedQuantity ? parseInt(savedQuantity, 10) : 1;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(`quantity_${product.id}`, quantity.toString());
-  }, [quantity, product.id]);
-
+function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedProduct, quantity, setQuantity}: TBasketProductProps): React.JSX.Element {
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value.replace(/\D/g, '');
     value = value.replace(/^0+/, '');
@@ -84,6 +77,7 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
           className="btn-icon btn-icon--prev"
           aria-label="уменьшить количество товара"
           onClick={handleDecreaseQuantity}
+          disabled={quantity === 1}
         >
           <svg width={7} height={12} aria-hidden="true">
             <use xlinkHref="#icon-arrow" />
@@ -103,6 +97,7 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
           className="btn-icon btn-icon--next"
           aria-label="увеличить количество товара"
           onClick={handleIncreaseQuantity}
+          disabled={quantity === 99}
         >
           <svg width={7} height={12} aria-hidden="true">
             <use xlinkHref="#icon-arrow" />

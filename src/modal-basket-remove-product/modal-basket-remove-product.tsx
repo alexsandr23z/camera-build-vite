@@ -10,9 +10,10 @@ type TModalBasketRemoveProductProps = {
   product: TProduct | null;
   modalBasketRemoveProductActive: boolean;
   setModalBasketRemoveProductActive: (arg: boolean) => void;
+  setQuantity: (arg: number) => void;
 }
 
-function ModalBasketRemoveProduct({ product, modalBasketRemoveProductActive, setModalBasketRemoveProductActive }: TModalBasketRemoveProductProps): React.JSX.Element {
+function ModalBasketRemoveProduct({ product, modalBasketRemoveProductActive, setModalBasketRemoveProductActive, setQuantity }: TModalBasketRemoveProductProps): React.JSX.Element {
   const dispatch = useAppDispatch();
 
   const handleRemoveProduct = () => {
@@ -20,6 +21,7 @@ function ModalBasketRemoveProduct({ product, modalBasketRemoveProductActive, set
       dispatch(removeBasketProduct(Number(product.id)));
       dispatch(toggleAddedToCart({ productId: product.id as string, added: false }));
     }
+    setQuantity(1);
     setModalBasketRemoveProductActive(false);
     document.body.style.overflow = 'unset';
   };

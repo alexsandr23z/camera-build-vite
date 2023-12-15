@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
@@ -11,6 +11,22 @@ function Basket(): React.JSX.Element {
   const products = useAppSelector((state) => state.products.basketProduct);
   const [modalBasketRemoveProductActive, setModalBasketRemoveProductActive] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
+
+  const [productQuantities, setProductQuantities] = useState<{ [key: number]: number }>(() => {
+    const savedQuantities = localStorage.getItem('productQuantities');
+    return savedQuantities ? JSON.parse(savedQuantities) as { [key: number]: number } : {};
+  });
+
+  const handleSetQuantity = (productId: number, quantity: number) => {
+    setProductQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [productId]: quantity,
+    }));
+  };
+
+  useEffect(() => {
+    localStorage.setItem('productQuantities', JSON.stringify(productQuantities));
+  }, [productQuantities]);
 
   return (
     <div className="wrapper">
@@ -57,9 +73,11 @@ function Basket(): React.JSX.Element {
                     product={product}
                     setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}
                     setSelectedProduct={setSelectedProduct}
+                    quantity={productQuantities[Number(product.id)] || 1}
+                    setQuantity={(quantity) => handleSetQuantity(Number(product.id), quantity)}
                   />)
                 )}
-                <ModalBasketRemoveProduct product={selectedProduct} modalBasketRemoveProductActive={modalBasketRemoveProductActive} setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}/>
+                <ModalBasketRemoveProduct setQuantity={(quantity) => handleSetQuantity(Number(selectedProduct?.id), quantity)} product={selectedProduct} modalBasketRemoveProductActive={modalBasketRemoveProductActive} setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}/>
               </ul>
               <div className="basket__summary">
                 <div className="basket__promo">
