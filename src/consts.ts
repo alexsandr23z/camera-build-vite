@@ -18,6 +18,7 @@ export enum ApiRoute {
   PromoProducts = '/promo',
   Similar = '/similar',
   Reviews = '/reviews',
+  Coupons = '/coupons',
 }
 
 export const ratingAndTitle = {
@@ -80,3 +81,10 @@ export enum SortUrl {
   SortTypeUrl = 'sortType',
   SortOrderUrl = 'sortOrder',
 }
+
+export enum PromoCode {
+  PromoOne = 'camera-333',
+  PromoTwo = 'camera-444',
+  PromoThree = 'camera-555',
+}
+

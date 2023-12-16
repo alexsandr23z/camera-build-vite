@@ -1,20 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
-import { useAppSelector } from '../../components/hook';
+import { useAppDispatch, useAppSelector } from '../../components/hook';
 import ModalBasketRemoveProduct from '../../modal-basket-remove-product/modal-basket-remove-product';
 import { TProduct } from '../../types/product';
 import BasketProduct from '../../components/basket-product/basket-product';
+import { formatNumberPrice } from '../../util/util';
+import { addPromoCode, setIsSendsPromoCode, setPromoCodeValid } from '../../store/slices/promo-code-slices/promo-code-slices';
+import { submitPromoCode } from '../../store/api-action/promo-code-api/promo-code-api';
+import { PromoCode } from '../../consts';
+import cn from 'classnames';
 
 function Basket(): React.JSX.Element {
+  const dispatch = useAppDispatch();
+  const coupons = useAppSelector((state) => state.promoCode.coupons);
+  const isValid = useAppSelector((state) => state.promoCode.isValid);
+  const isSends = useAppSelector((state) => state.promoCode.isSends);
   const products = useAppSelector((state) => state.products.basketProduct);
   const [modalBasketRemoveProductActive, setModalBasketRemoveProductActive] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
 
-  const [productQuantities, setProductQuantities] = useState<{ [key: number]: number }>(() => {
+  const [productQuantities, setProductQuantities] = useState<{ [key: string]: number }>(() => {
     const savedQuantities = localStorage.getItem('productQuantities');
-    return savedQuantities ? JSON.parse(savedQuantities) as { [key: number]: number } : {};
+    return savedQuantities ? JSON.parse(savedQuantities) as { [key: string]: number } : {};
+  });
+
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalCouponPrice, setTotalCouponPrice] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(() => {
+    const savedDiscount = localStorage.getItem('discount');
+    return savedDiscount !== null ? parseFloat(savedDiscount) : 0;
   });
 
   const handleSetQuantity = (productId: number, quantity: number) => {
@@ -25,8 +41,71 @@ function Basket(): React.JSX.Element {
   };
 
   useEffect(() => {
+    if (selectedProduct && !products.find((p) => p.id === selectedProduct.id)) {
+      setProductQuantities((prevQuantities) => {
+        const productIdString = String(selectedProduct.id);
+        const { [productIdString]: removedQuantity, ...newQuantities } = prevQuantities;
+        void removedQuantity;
+        return { ...newQuantities };
+      });
+    }
+  }, [products, selectedProduct]);
+
+  useEffect(() => {
     localStorage.setItem('productQuantities', JSON.stringify(productQuantities));
   }, [productQuantities]);
+
+  useEffect(() => {
+    const newTotalPrice = products.reduce((acc, product) => {
+      const productId = String(product.id);
+      const quantity = productQuantities[Number(productId)] || 1;
+      return acc + product.price * quantity;
+    }, 0);
+    setTotalPrice(newTotalPrice);
+
+    const discountedPrice = newTotalPrice - (newTotalPrice * discount) / 100;
+    setTotalCouponPrice(discountedPrice);
+
+  }, [products, productQuantities, discount]);
+
+  function handleCouponsChange(evt: ChangeEvent<HTMLInputElement>) {
+    dispatch(addPromoCode(evt.target.value));
+  }
+
+  useEffect(() => {
+    if (coupons === PromoCode.PromoOne || coupons === PromoCode.PromoTwo || coupons === PromoCode.PromoThree) {
+      dispatch(setPromoCodeValid(true));
+    } else {
+      dispatch(setPromoCodeValid(false));
+    }
+  }, [dispatch, coupons]);
+
+  function handleFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
+    evt.preventDefault();
+    dispatch(setIsSendsPromoCode());
+    if(isValid) {
+      dispatch(submitPromoCode({coupon : coupons}));
+    }
+  }
+
+  useEffect(() => {
+    if (typeof coupons === 'number' && coupons > 0) {
+      setDiscount(coupons);
+    } else {
+      setDiscount(0);
+    }
+  }, [coupons]);
+
+  useEffect(() => {
+    const storedDiscount = localStorage.getItem('discount');
+    if (storedDiscount !== null) {
+      setDiscount(parseFloat(storedDiscount));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('discount', String(discount));
+  }, [discount]);
 
   return (
     <div className="wrapper">
@@ -85,14 +164,20 @@ function Basket(): React.JSX.Element {
                     Если у вас есть промокод на скидку, примените его в этом поле
                   </p>
                   <div className="basket-form">
-                    <form action="#">
-                      <div className="custom-input">
+                    <form onSubmit={handleFormSubmit}>
+                      <div className={cn(
+                        'custom-input',
+                        {'is-invalid': isValid === false && isSends},
+                        {'is-valid': !isSends && discount > 0},
+                      )}
+                      >
                         <label>
                           <span className="custom-input__label">Промокод</span>
                           <input
                             type="text"
                             name="promo"
                             placeholder="Введите промокод"
+                            onChange={handleCouponsChange}
                           />
                         </label>
                         <p className="custom-input__error">Промокод неверный</p>
@@ -107,12 +192,12 @@ function Basket(): React.JSX.Element {
                 <div className="basket__summary-order">
                   <p className="basket__summary-item">
                     <span className="basket__summary-text">Всего:</span>
-                    <span className="basket__summary-value">111 390 ₽</span>
+                    <span className="basket__summary-value">{formatNumberPrice(totalPrice)} ₽</span>
                   </p>
                   <p className="basket__summary-item">
                     <span className="basket__summary-text">Скидка:</span>
-                    <span className="basket__summary-value basket__summary-value--bonus">
-                      0 ₽
+                    <span className={discount > 0 ? 'basket__summary-value basket__summary-value--bonus' : 'basket__summary-value'}>
+                      {formatNumberPrice(Math.floor(totalPrice - totalCouponPrice))} ₽
                     </span>
                   </p>
                   <p className="basket__summary-item">
@@ -120,7 +205,7 @@ function Basket(): React.JSX.Element {
                       К оплате:
                     </span>
                     <span className="basket__summary-value basket__summary-value--total">
-                      111 390 ₽
+                      {formatNumberPrice(totalCouponPrice)} ₽
                     </span>
                   </p>
                   <button className="btn btn--purple" type="submit">

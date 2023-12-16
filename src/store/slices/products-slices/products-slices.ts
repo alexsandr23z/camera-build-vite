@@ -38,7 +38,7 @@ const productsSlices = createSlice({
     },
     toggleAddedToCart(state, action: PayloadAction<{ productId: string; added: boolean }>) {
       const { productId, added } = action.payload;
-      state.addedToCart[productId] = added;
+      state.addedToCart = { ...(state.addedToCart || {}), [productId]: added };
 
       localStorage.setItem('addedToCart', JSON.stringify(state.addedToCart));
     },
