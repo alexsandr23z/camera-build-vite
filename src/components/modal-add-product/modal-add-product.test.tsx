@@ -3,9 +3,9 @@ import '@testing-library/jest-dom/extend-expect';
 import ModalAddProduct from './modal-add-product';
 import { productMock } from '../../mocks/mocks';
 import { vi } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { MockStore, configureMockStore } from '@jedmao/redux-mock-store';
-import { BrowserRouter } from 'react-router-dom';
 
 const mockStore = configureMockStore([]);
 

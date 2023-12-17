@@ -98,28 +98,6 @@ function Basket(): React.JSX.Element {
     }
   }
 
-  // function handleSubmitClick() {
-  //   setIsSubmiting(true);
-  //   dispatch(submitOrder({order : {
-  //     coupon: targetCoupon,
-  //     camerasIds: products.map((id) => Number(id.id))
-  //   }}));
-  // }
-
-  // useEffect(() => {
-  //   if(!error && isSubmiting) {
-  //     setModalBasketProductActive(true);
-  //     dispatch(removeBasketSucces());
-  //     localStorage.removeItem('discount');
-  //     localStorage.removeItem('targetCoupon');
-  //     setIsSubmiting(false);
-  //   } else if(error && isSubmiting) {
-  //     // handleSetQuantity(productQuantities[Number(selectedProduct?.id)], 1);
-  //     setIsSubmiting(false);
-  //   }
-  // }, [dispatch, error, isSubmiting]);
-
-
   async function handleSubmitClick() {
     try {
       const { data } = await api.post<TOrder>(`${ApiRoute.Orders}`, {
