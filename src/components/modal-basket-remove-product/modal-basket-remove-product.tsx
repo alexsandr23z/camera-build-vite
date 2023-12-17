@@ -1,10 +1,10 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import { TProduct } from '../types/product';
-import { collectFocusableElements } from '../util/util';
-import { AppRoute } from '../consts';
+import { TProduct } from '../../types/product';
+import { collectFocusableElements } from '../../util/util';
+import { AppRoute } from '../../consts';
 import {Link} from 'react-router-dom';
-import { useAppDispatch } from '../components/hook';
-import { removeBasketProduct, toggleAddedToCart } from '../store/slices/products-slices/products-slices';
+import { useAppDispatch } from '../hook';
+import { removeBasketProduct, toggleAddedToCart } from '../../store/slices/products-slices/products-slices';
 
 type TModalBasketRemoveProductProps = {
   product: TProduct | null;

@@ -6,6 +6,7 @@ import productSlices from './slices/product-slices/product-slices';
 import productSimilarSlices from './slices/product-similar-slices/product-similar-slices';
 import reviewSlices from './slices/review-slices/review-slices';
 import promoCodeSlices from './slices/promo-code-slices/promo-code-slices';
+import ordersSlices from './slices/orders-slices/orders-slices';
 
 export const rootReducer = combineReducers({
   products: productsSlices,
@@ -15,4 +16,5 @@ export const rootReducer = combineReducers({
   productsSimilar: productSimilarSlices,
   reviews: reviewSlices,
   promoCode: promoCodeSlices,
+  order: ordersSlices
 });

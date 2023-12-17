@@ -42,6 +42,14 @@ const productsSlices = createSlice({
 
       localStorage.setItem('addedToCart', JSON.stringify(state.addedToCart));
     },
+    removeBasketSucces(state) {
+      state.basketProduct = [];
+      state.basketCount = 0;
+      state.addedToCart = {};
+
+      localStorage.removeItem('addedToCart');
+      localStorage.removeItem('basket');
+    },
   },
   extraReducers(builder) {
     builder
@@ -56,5 +64,5 @@ const productsSlices = createSlice({
 });
 
 export default productsSlices.reducer;
-export const { addBasketProduct, removeBasketProduct, toggleAddedToCart } = productsSlices.actions;
+export const { addBasketProduct, removeBasketProduct, toggleAddedToCart, removeBasketSucces } = productsSlices.actions;
 

@@ -19,6 +19,7 @@ export enum ApiRoute {
   Similar = '/similar',
   Reviews = '/reviews',
   Coupons = '/coupons',
+  Orders = '/orders',
 }
 
 export const ratingAndTitle = {

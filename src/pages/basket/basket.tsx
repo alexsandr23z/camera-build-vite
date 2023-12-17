@@ -3,14 +3,20 @@ import { Helmet } from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 import { useAppDispatch, useAppSelector } from '../../components/hook';
-import ModalBasketRemoveProduct from '../../modal-basket-remove-product/modal-basket-remove-product';
+import ModalBasketRemoveProduct from '../../components/modal-basket-remove-product/modal-basket-remove-product';
 import { TProduct } from '../../types/product';
 import BasketProduct from '../../components/basket-product/basket-product';
 import { formatNumberPrice } from '../../util/util';
 import { addPromoCode, setIsSendsPromoCode, setPromoCodeValid } from '../../store/slices/promo-code-slices/promo-code-slices';
 import { submitPromoCode } from '../../store/api-action/promo-code-api/promo-code-api';
-import { PromoCode } from '../../consts';
+import { ApiRoute, PromoCode } from '../../consts';
 import cn from 'classnames';
+import ModalBasketProductSuccess from '../../components/modal-basket-product-success/modal-basket-product-success';
+import { removeBasketSucces } from '../../store/slices/products-slices/products-slices';
+import { TOrder } from '../../types/orders';
+import { addOrder } from '../../store/slices/orders-slices/orders-slices';
+import { api } from '../../store';
+import ModalBasketProductNoSuccess from '../../components/modal-basket-product-success/modal-basket-product-no-success';
 
 function Basket(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -19,6 +25,8 @@ function Basket(): React.JSX.Element {
   const isSends = useAppSelector((state) => state.promoCode.isSends);
   const products = useAppSelector((state) => state.products.basketProduct);
   const [modalBasketRemoveProductActive, setModalBasketRemoveProductActive] = useState(false);
+  const [modalBasketProductSuccessActive, setModalBasketProductSuccessActive] = useState(false);
+  const [modalBasketProductNoSuccessActive, setModalBasketProductNoSuccessActive] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
 
   const [productQuantities, setProductQuantities] = useState<{ [key: string]: number }>(() => {
@@ -27,6 +35,7 @@ function Basket(): React.JSX.Element {
   });
 
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [targetCoupon, setTargetCoupon] = useState<string>('');
   const [totalCouponPrice, setTotalCouponPrice] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(() => {
     const savedDiscount = localStorage.getItem('discount');
@@ -68,10 +77,6 @@ function Basket(): React.JSX.Element {
 
   }, [products, productQuantities, discount]);
 
-  function handleCouponsChange(evt: ChangeEvent<HTMLInputElement>) {
-    dispatch(addPromoCode(evt.target.value));
-  }
-
   useEffect(() => {
     if (coupons === PromoCode.PromoOne || coupons === PromoCode.PromoTwo || coupons === PromoCode.PromoThree) {
       dispatch(setPromoCodeValid(true));
@@ -80,11 +85,57 @@ function Basket(): React.JSX.Element {
     }
   }, [dispatch, coupons]);
 
+  function handleCouponsChange(evt: ChangeEvent<HTMLInputElement>) {
+    dispatch(addPromoCode(evt.target.value));
+    setTargetCoupon(evt.target.value);
+  }
+
   function handleFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
     dispatch(setIsSendsPromoCode());
     if(isValid) {
       dispatch(submitPromoCode({coupon : coupons}));
+    }
+  }
+
+  // function handleSubmitClick() {
+  //   setIsSubmiting(true);
+  //   dispatch(submitOrder({order : {
+  //     coupon: targetCoupon,
+  //     camerasIds: products.map((id) => Number(id.id))
+  //   }}));
+  // }
+
+  // useEffect(() => {
+  //   if(!error && isSubmiting) {
+  //     setModalBasketProductActive(true);
+  //     dispatch(removeBasketSucces());
+  //     localStorage.removeItem('discount');
+  //     localStorage.removeItem('targetCoupon');
+  //     setIsSubmiting(false);
+  //   } else if(error && isSubmiting) {
+  //     // handleSetQuantity(productQuantities[Number(selectedProduct?.id)], 1);
+  //     setIsSubmiting(false);
+  //   }
+  // }, [dispatch, error, isSubmiting]);
+
+
+  async function handleSubmitClick() {
+    try {
+      const { data } = await api.post<TOrder>(`${ApiRoute.Orders}`, {
+        coupon: targetCoupon,
+        camerasIds: products.map((id) => Number(id.id))
+      });
+      setModalBasketProductSuccessActive(true);
+      dispatch(addOrder(data));
+      dispatch(removeBasketSucces());
+      setDiscount(0);
+      localStorage.removeItem('discount');
+      localStorage.removeItem('targetCoupon');
+    } catch (error) {
+      setModalBasketProductNoSuccessActive(true);
+      localStorage.removeItem('discount');
+      localStorage.removeItem('targetCoupon');
     }
   }
 
@@ -98,14 +149,21 @@ function Basket(): React.JSX.Element {
 
   useEffect(() => {
     const storedDiscount = localStorage.getItem('discount');
+    const storedtargetCoupon = localStorage.getItem('targetCoupon');
+
     if (storedDiscount !== null) {
       setDiscount(parseFloat(storedDiscount));
+    }
+
+    if (storedtargetCoupon !== null) {
+      setTargetCoupon(storedtargetCoupon);
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('discount', String(discount));
-  }, [discount]);
+    localStorage.setItem('targetCoupon', targetCoupon);
+  }, [discount, targetCoupon]);
 
   return (
     <div className="wrapper">
@@ -156,7 +214,12 @@ function Basket(): React.JSX.Element {
                     setQuantity={(quantity) => handleSetQuantity(Number(product.id), quantity)}
                   />)
                 )}
-                <ModalBasketRemoveProduct setQuantity={(quantity) => handleSetQuantity(Number(selectedProduct?.id), quantity)} product={selectedProduct} modalBasketRemoveProductActive={modalBasketRemoveProductActive} setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}/>
+                <ModalBasketRemoveProduct
+                  setQuantity={(quantity) => handleSetQuantity(Number(selectedProduct?.id), quantity)}
+                  product={selectedProduct}
+                  modalBasketRemoveProductActive={modalBasketRemoveProductActive}
+                  setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}
+                />
               </ul>
               <div className="basket__summary">
                 <div className="basket__promo">
@@ -205,10 +268,15 @@ function Basket(): React.JSX.Element {
                       К оплате:
                     </span>
                     <span className="basket__summary-value basket__summary-value--total">
-                      {formatNumberPrice(totalCouponPrice)} ₽
+                      {formatNumberPrice(Math.floor(totalCouponPrice))} ₽
                     </span>
                   </p>
-                  <button className="btn btn--purple" type="submit">
+                  <button className="btn btn--purple"
+                    type="submit"
+                    disabled={products.length === 0}
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    onClick={handleSubmitClick}
+                  >
                     Оформить заказ
                   </button>
                 </div>
@@ -216,6 +284,8 @@ function Basket(): React.JSX.Element {
             </div>
           </section>
         </div>
+        <ModalBasketProductSuccess modalBasketProductSuccessActive={modalBasketProductSuccessActive} setModalBasketProductSuccessActive={setModalBasketProductSuccessActive}/>
+        <ModalBasketProductNoSuccess modalBasketProductNoSuccessActive={modalBasketProductNoSuccessActive} setModalBasketProductNoSuccessActive={setModalBasketProductNoSuccessActive}/>
       </main>
       <Footer />
     </div>
