@@ -45,9 +45,10 @@ function ModalAddProduct({onAddToCart, product, modalAddProductActive, setModalA
   const refLastFocusable = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const outerElement = refOuter.current;
-
-    if (outerElement) {
+    if(refOuter &&
+      refFirstFocusable &&
+      refLastFocusable) {
+      const outerElement = refOuter.current;
       const focusableElements = collectFocusableElements(outerElement);
 
       refFirstFocusable.current = focusableElements[0] || null;
@@ -55,7 +56,7 @@ function ModalAddProduct({onAddToCart, product, modalAddProductActive, setModalA
 
       refFirstFocusable.current?.focus();
     }
-  }, [refOuter]);
+  }, [refOuter, refFirstFocusable, refLastFocusable]);
 
   const onKeyDown = useCallback((e: React.KeyboardEvent) => {
 

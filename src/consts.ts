@@ -6,6 +6,8 @@ export const PRODUCT_SIMILAR_END = 3;
 export const PRODUCT_SIMILAR_START = 0;
 export const START_SEARCH_FORM = 3;
 export const SHOWING_REVIEWS_COUNT = 3;
+export const START_QUANTITY = 1;
+export const END_QUANTITY = 99;
 
 export enum AppRoute {
   Main = '/',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatNumberPrice } from '../../util/util';
 import { TProduct } from '../../types/product';
+import { END_QUANTITY, START_QUANTITY } from '../../consts';
 
 type TBasketProductProps = {
   product: TProduct;
@@ -14,20 +15,20 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value.replace(/\D/g, '');
     value = value.replace(/^0+/, '');
-    value = String(Math.max(1, Math.min(parseInt(value, 10) || 1, 99)));
+    value = String(Math.max(1, Math.min(parseInt(value, 10) || START_QUANTITY, END_QUANTITY)));
 
     setQuantity(Number(value));
   };
 
   const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    if (quantity > START_QUANTITY) {
+      setQuantity(quantity - START_QUANTITY);
     }
   };
 
   const handleIncreaseQuantity = () => {
-    if (quantity < 99) {
-      setQuantity(quantity + 1);
+    if (quantity < END_QUANTITY) {
+      setQuantity(quantity + START_QUANTITY);
     }
   };
 
@@ -77,7 +78,7 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
           className="btn-icon btn-icon--prev"
           aria-label="уменьшить количество товара"
           onClick={handleDecreaseQuantity}
-          disabled={quantity === 1}
+          disabled={quantity === START_QUANTITY}
         >
           <svg width={7} height={12} aria-hidden="true">
             <use xlinkHref="#icon-arrow" />
@@ -88,8 +89,8 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
           type="text"
           id={`counter${product.id}`}
           value={quantity}
-          min={1}
-          max={99}
+          min={START_QUANTITY}
+          max={END_QUANTITY}
           aria-label="количество товара"
           onChange={handleQuantityChange}
         />
@@ -97,7 +98,7 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
           className="btn-icon btn-icon--next"
           aria-label="увеличить количество товара"
           onClick={handleIncreaseQuantity}
-          disabled={quantity === 99}
+          disabled={quantity === END_QUANTITY}
         >
           <svg width={7} height={12} aria-hidden="true">
             <use xlinkHref="#icon-arrow" />
