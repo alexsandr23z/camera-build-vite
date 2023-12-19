@@ -19,6 +19,7 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const [modalBasketAddProductActive, setmodalBasketAddProductActive] = useState(false);
   const isAddedToCart = useAppSelector((state) => state.products.addedToCart[product.id]);
+  const productQuantities = useAppSelector((state) => state.products.productQuantities);
 
   const handleToggleAddToCart = () => {
     dispatch(toggleAddedToCart({ productId: product.id as string, added: !isAddedToCart }));
@@ -49,25 +50,26 @@ function ProductSimilarCard({ product }: TProductsSimilarCardProps): React.JSX.E
         </p>
       </div>
       <div className="product-card__buttons">
-        {!isAddedToCart ? (
-          <button
-            className="btn btn--purple product-card__btn"
-            type="button"
-            onClick={() => {
-              document.body.style.overflow = 'hidden';
-              setModalAddProductActive(true);
-            }}
-          >
-            Купить
-          </button>
+        {productQuantities && productQuantities[String(product.id)] > 0 ? (
+          <Link className="btn btn--purple-border product-card__btn product-card__btn--in-cart" to={AppRoute.Basket}>
+            <svg width="16" height="16" aria-hidden="true">
+              <use xlinkHref="#icon-basket"></use>
+            </svg>
+            В корзине
+          </Link>
+
         ) :
           (
-            <Link className="btn btn--purple-border product-card__btn product-card__btn--in-cart" to={AppRoute.Basket}>
-              <svg width="16" height="16" aria-hidden="true">
-                <use xlinkHref="#icon-basket"></use>
-              </svg>
-              В корзине
-            </Link>
+            <button
+              className="btn btn--purple product-card__btn"
+              type="button"
+              onClick={() => {
+                document.body.style.overflow = 'hidden';
+                setModalAddProductActive(true);
+              }}
+            >
+              Купить
+            </button>
           )}
         <ModalAddProduct onAddToCart={handleToggleAddToCart} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
         <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>

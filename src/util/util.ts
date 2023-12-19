@@ -1,5 +1,5 @@
 import { MAX_COUNT_STARS, SortOrder, SortType } from '../consts';
-import { TProduct, TProducts } from '../types/product';
+import { TProduct, TProductBasket } from '../types/product';
 
 export const showActiveRateng = (rating: number) => {
   const activeRating = [];
@@ -47,15 +47,34 @@ export const collectFocusableElements = (element: HTMLElement | null) => {
 
 export const formatNumberPrice = (prece: number) => prece.toLocaleString('fr-FR').replace(/,/g, ' ');
 
-export const loadBasketFromLocalStorage = (): TProducts => {
+export const loadBasketFromLocalStorage = (): TProductBasket[] => {
   try {
     const serializedBasket = localStorage.getItem('basket');
     if (serializedBasket === null) {
       return [];
     }
-    return JSON.parse(serializedBasket) as TProducts;
+    return JSON.parse(serializedBasket) as TProductBasket[];
   } catch (err) {
     return [];
   }
 };
 
+export function calculateTotalQuantityExcludingIds(productQuantities: { [key: string]: number | unknown[] } | undefined): number {
+  if (!productQuantities) {
+    return 0;
+  }
+
+  const validKeys = Object.keys(productQuantities).filter(
+    (key) => !isNaN(Number(key)) && !Array.isArray(productQuantities[key])
+  );
+
+  return validKeys.reduce((total, key) => {
+    const value = productQuantities[key];
+
+    if (typeof value === 'number') {
+      return total + value;
+    } else {
+      return total;
+    }
+  }, 0);
+}

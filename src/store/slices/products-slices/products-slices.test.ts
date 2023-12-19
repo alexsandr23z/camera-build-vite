@@ -10,6 +10,7 @@ describe('Products Reducer', () => {
       basketProduct: [],
       basketCount: 1,
       addedToCart: {},
+      productQuantities: {}
     };
 
     const nextState = productsSlices(initialState, { type: fetchProducts.pending.type });
@@ -19,6 +20,7 @@ describe('Products Reducer', () => {
       basketProduct: [],
       basketCount: 1,
       addedToCart: {},
+      productQuantities: {}
     });
   });
 
@@ -29,6 +31,7 @@ describe('Products Reducer', () => {
       basketProduct: [],
       basketCount: 1,
       addedToCart: {},
+      productQuantities: {}
     };
 
     const payload = productsMock;
@@ -39,6 +42,7 @@ describe('Products Reducer', () => {
       basketProduct: [],
       basketCount: 1,
       addedToCart: {},
+      productQuantities: {}
     });
   });
 });

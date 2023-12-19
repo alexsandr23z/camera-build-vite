@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatNumberPrice } from '../../util/util';
 import { TProduct } from '../../types/product';
 import { END_QUANTITY, START_QUANTITY } from '../../consts';
@@ -11,24 +11,42 @@ type TBasketProductProps = {
   setQuantity: (arg: number) => void;
 }
 
-function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedProduct, quantity, setQuantity}: TBasketProductProps): React.JSX.Element {
+function BasketProduct({ product, setModalBasketRemoveProductActive, setSelectedProduct, quantity, setQuantity }: TBasketProductProps): React.JSX.Element {
+  const [inputValue, setInputValue] = useState<string | null>(null);
+
+  useEffect(() => {
+    setInputValue(quantity === 0 ? null : String(quantity));
+  }, [quantity]);
+
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value.replace(/\D/g, '');
-    value = value.replace(/^0+/, '');
-    value = String(Math.max(1, Math.min(parseInt(value, 10) || START_QUANTITY, END_QUANTITY)));
+    value = value === '' ? '' : String(Math.min(parseInt(value, 10) || START_QUANTITY, END_QUANTITY));
+    setInputValue(value);
+    if (value !== '') {
+      setQuantity(Number(value));
+    }
+  };
 
-    setQuantity(Number(value));
+  const handleBlur = () => {
+    if (inputValue === null || inputValue === '') {
+      setInputValue(String(1));
+      setQuantity(1);
+    } else {
+      setQuantity(Number(inputValue));
+    }
   };
 
   const handleDecreaseQuantity = () => {
     if (quantity > START_QUANTITY) {
       setQuantity(quantity - START_QUANTITY);
+      setInputValue(String(quantity - START_QUANTITY));
     }
   };
 
   const handleIncreaseQuantity = () => {
     if (quantity < END_QUANTITY) {
       setQuantity(quantity + START_QUANTITY);
+      setInputValue(String(quantity + START_QUANTITY));
     }
   };
 
@@ -37,6 +55,7 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
     setModalBasketRemoveProductActive(true);
     setSelectedProduct(product);
   };
+
 
   return (
     <li key={product.id} className="basket-item">
@@ -84,14 +103,15 @@ function BasketProduct({product, setModalBasketRemoveProductActive, setSelectedP
             <use xlinkHref="#icon-arrow" />
           </svg>
         </button>
-        <label className="visually-hidden" htmlFor={`counter${product.id}`} />
+        <label className="visually-hidden" htmlFor={`counter${product.id}`}/>
         <input
           type="text"
           id={`counter${product.id}`}
-          value={quantity}
           min={START_QUANTITY}
           max={END_QUANTITY}
           aria-label="количество товара"
+          value={inputValue === null ? '' : inputValue}
+          onBlur={handleBlur}
           onChange={handleQuantityChange}
         />
         <button

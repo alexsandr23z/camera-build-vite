@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import FormSearch from '../form-search/form-search';
 import { useAppSelector } from '../hook';
+import { calculateTotalQuantityExcludingIds } from '../../util/util';
 
 function Header(): React.JSX.Element {
   const basketCount = useAppSelector((state) => state.products.basketCount);
+  const productQuantities = useAppSelector((state) => state.products.productQuantities);
+
+  const totalQuantity = calculateTotalQuantityExcludingIds(productQuantities);
 
   return (
     <header className="header" id="header">
@@ -49,7 +53,7 @@ function Header(): React.JSX.Element {
             <use xlinkHref="#icon-basket" />
           </svg>
           {basketCount > 0 &&
-            <span className="header__basket-count">{basketCount}</span>}
+            <span className="header__basket-count">{totalQuantity}</span>}
         </Link>
       </div>
     </header>

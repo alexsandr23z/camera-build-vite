@@ -12,7 +12,7 @@ import { submitPromoCode } from '../../store/api-action/promo-code-api/promo-cod
 import { ApiRoute, PromoCode } from '../../consts';
 import cn from 'classnames';
 import ModalBasketProductSuccess from '../../components/modal-basket-product-success/modal-basket-product-success';
-import { removeBasketSucces } from '../../store/slices/products-slices/products-slices';
+import { removeBasketSucces, removeProduct, setQuantity } from '../../store/slices/products-slices/products-slices';
 import { TOrder } from '../../types/orders';
 import { addOrder } from '../../store/slices/orders-slices/orders-slices';
 import { api } from '../../store';
@@ -28,11 +28,7 @@ function Basket(): React.JSX.Element {
   const [modalBasketProductSuccessActive, setModalBasketProductSuccessActive] = useState(false);
   const [modalBasketProductNoSuccessActive, setModalBasketProductNoSuccessActive] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
-
-  const [productQuantities, setProductQuantities] = useState<{ [key: string]: number }>(() => {
-    const savedQuantities = localStorage.getItem('productQuantities');
-    return savedQuantities ? JSON.parse(savedQuantities) as { [key: string]: number } : {};
-  });
+  const productQuantities = useAppSelector((state) => state.products.productQuantities);
 
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [targetCoupon, setTargetCoupon] = useState<string>('');
@@ -43,22 +39,14 @@ function Basket(): React.JSX.Element {
   });
 
   const handleSetQuantity = (productId: number, quantity: number) => {
-    setProductQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: quantity,
-    }));
+    dispatch(setQuantity({ productId: String(productId), quantity }));
   };
 
   useEffect(() => {
     if (selectedProduct && !products.find((p) => p.id === selectedProduct.id)) {
-      setProductQuantities((prevQuantities) => {
-        const productIdString = String(selectedProduct.id);
-        const { [productIdString]: removedQuantity, ...newQuantities } = prevQuantities;
-        void removedQuantity;
-        return { ...newQuantities };
-      });
+      dispatch(removeProduct(String(selectedProduct.id)));
     }
-  }, [products, selectedProduct]);
+  }, [dispatch, products, selectedProduct]);
 
   useEffect(() => {
     localStorage.setItem('productQuantities', JSON.stringify(productQuantities));
@@ -67,7 +55,7 @@ function Basket(): React.JSX.Element {
   useEffect(() => {
     const newTotalPrice = products.reduce((acc, product) => {
       const productId = String(product.id);
-      const quantity = productQuantities[Number(productId)] || 1;
+      const quantity = productQuantities ? productQuantities[productId] || 1 : 1;
       return acc + product.price * quantity;
     }, 0);
     setTotalPrice(newTotalPrice);
@@ -101,8 +89,11 @@ function Basket(): React.JSX.Element {
   async function handleSubmitClick() {
     try {
       const { data } = await api.post<TOrder>(`${ApiRoute.Orders}`, {
-        coupon: targetCoupon,
+        coupon: targetCoupon || null,
         camerasIds: products.map((id) => Number(id.id))
+      });
+      products.forEach((product) => {
+        dispatch(setQuantity({ productId: String(product.id), quantity: 0 }));
       });
       setModalBasketProductSuccessActive(true);
       dispatch(addOrder(data));
@@ -188,7 +179,7 @@ function Basket(): React.JSX.Element {
                     product={product}
                     setModalBasketRemoveProductActive={setModalBasketRemoveProductActive}
                     setSelectedProduct={setSelectedProduct}
-                    quantity={productQuantities[Number(product.id)] || 1}
+                    quantity={productQuantities ? productQuantities[String(product.id)] || 1 : 1}
                     setQuantity={(quantity) => handleSetQuantity(Number(product.id), quantity)}
                   />)
                 )}

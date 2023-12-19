@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { TProduct } from '../../types/product';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AppRoute } from '../../consts';
 import ModalAddProduct from '../modal-add-product/modal-add-product';
 import Rating from '../rating/rating';
@@ -13,18 +13,19 @@ type TProductProps = {
   product: TProduct;
 }
 
-function ProductsCard({product}: TProductProps): React.JSX.Element {
+function ProductsCard({ product }: TProductProps): React.JSX.Element {
   const dispatch = useAppDispatch();
   const [modalAddProductActive, setModalAddProductActive] = useState(false);
   const [modalBasketAddProductActive, setmodalBasketAddProductActive] = useState(false);
   const isAddedToCart = useAppSelector((state) => state.products.addedToCart[product.id]);
+  const productQuantities = useAppSelector((state) => state.products.productQuantities);
 
   const handleToggleAddToCart = () => {
     dispatch(toggleAddedToCart({ productId: product.id as string, added: !isAddedToCart }));
   };
 
-  const {previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
-    price, rating, reviewCount, name} = product;
+  const { previewImg, previewImg2x, previewImgWebp, previewImgWebp2x,
+    price, rating, reviewCount, name } = product;
 
   return (
     <div className="product-card">
@@ -44,7 +45,7 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
         </picture>
       </div>
       <div className="product-card__info">
-        <Rating rating={rating} reviewCount={reviewCount}/>
+        <Rating rating={rating} reviewCount={reviewCount} />
         <p className="product-card__title" data-testid="product-title">
           {name}
         </p>
@@ -53,28 +54,29 @@ function ProductsCard({product}: TProductProps): React.JSX.Element {
         </p>
       </div>
       <div className="product-card__buttons">
-        {!isAddedToCart ? (
-          <button
-            className="btn btn--purple product-card__btn"
-            type="button"
-            onClick={() => {
-              document.body.style.overflow = 'hidden';
-              setModalAddProductActive(true);
-            }}
-          >
-            Купить
-          </button>
+        {productQuantities && productQuantities[String(product.id)] > 0 ? (
+          <Link className="btn btn--purple-border product-card__btn product-card__btn--in-cart" to={AppRoute.Basket}>
+            <svg width="16" height="16" aria-hidden="true">
+              <use xlinkHref="#icon-basket"></use>
+            </svg>
+            В корзине
+          </Link>
+
         ) :
           (
-            <Link className="btn btn--purple-border product-card__btn product-card__btn--in-cart" to={AppRoute.Basket}>
-              <svg width="16" height="16" aria-hidden="true">
-                <use xlinkHref="#icon-basket"></use>
-              </svg>
-              В корзине
-            </Link>
+            <button
+              className="btn btn--purple product-card__btn"
+              type="button"
+              onClick={() => {
+                document.body.style.overflow = 'hidden';
+                setModalAddProductActive(true);
+              }}
+            >
+              Купить
+            </button>
           )}
-        <ModalAddProduct onAddToCart={handleToggleAddToCart} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
-        <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive}/>
+        <ModalAddProduct onAddToCart={handleToggleAddToCart} product={product} modalAddProductActive={modalAddProductActive} setModalAddProductActive={setModalAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive} />
+        <ModalBasketAddProduct modalBasketAddProductActive={modalBasketAddProductActive} setmodalBasketAddProductActive={setmodalBasketAddProductActive} />
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${product.id}`}>
           Подробнее
         </Link>

@@ -1,5 +1,5 @@
 import React, {useEffect, useCallback, useRef} from 'react';
-import { TProduct } from '../../types/product';
+import { TProduct, TProductBasket } from '../../types/product';
 import { collectFocusableElements, formatNumberPrice } from '../../util/util';
 import { useAppDispatch } from '../hook';
 import { addBasketProduct } from '../../store/slices/products-slices/products-slices';
@@ -18,7 +18,7 @@ function ModalAddProduct({onAddToCart, product, modalAddProductActive, setModalA
     price, name, vendorCode, level, type, category} = product;
 
   const handleAddToCart = () => {
-    dispatch(addBasketProduct(product));
+    dispatch(addBasketProduct(product as TProductBasket));
     setmodalBasketAddProductActive(true);
     document.body.style.overflow = 'hidden';
     setModalAddProductActive(false);
